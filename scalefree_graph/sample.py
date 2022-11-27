@@ -58,6 +58,7 @@ H = G[0]
 for i in range(graph_num-1):
   H = nx.compose(H, G[i+1])
 
+# producing artificially binomial distribution
 for i in range(graph_num):
   for j in range(i+1, graph_num):
     rand1 = np.random.rand()
