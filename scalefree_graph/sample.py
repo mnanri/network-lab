@@ -27,17 +27,29 @@ def generate_sample(n=100, m=2, graph_num=4):
   second_max_deg_nodes = {}
   third_max_deg_nodes = {}
   for i in range(graph_num):
-    # print("max degree of graph %d: %d" % (i, np.max(list(dict(G[i].degree()).values()))))
-    # print("average shortest path length of graph %d: %f" % (i, nx.average_shortest_path_length(G[i])))
-    print("node that has the largest degree in graph %d: %d" % (i, max(dict(G[i].degree()).items(), key=lambda x: x[1])[0]))
+    # print("node that has the largest degree in graph %d: %d" % (i, max(dict(G[i].degree()).items(), key=lambda x: x[1])[0]))
     max_deg_nodes[i] = max(dict(G[i].degree()).items(), key=lambda x: x[1])[0]
     second_max_deg_nodes[i] = sorted(dict(G[i].degree()).items(), key=lambda x: x[1], reverse=True)[1][0]
     third_max_deg_nodes[i] = sorted(dict(G[i].degree()).items(), key=lambda x: x[1], reverse=True)[2][0]
+
+  min_deg_nodes = {}
+  second_min_deg_nodes = {}
+  third_min_deg_nodes = {}
+  for i in range(graph_num):
+    # print("node that has the smallest degree in graph %d: %d" % (i, min(dict(G[i].degree()).items(), key=lambda x: x[1])[0]))
+    min_deg_nodes[i] = min(dict(G[i].degree()).items(), key=lambda x: x[1])[0]
+    second_min_deg_nodes[i] = sorted(dict(G[i].degree()).items(), key=lambda x: x[1])[1][0]
+    third_min_deg_nodes[i] = sorted(dict(G[i].degree()).items(), key=lambda x: x[1])[2][0]
 
   max_cent_nodes = {}
   for i in range(graph_num):
     print("node that has the largest centrality in graph %d: %d" % (i, max(nx.betweenness_centrality(G[i]).items(), key=lambda x: x[1])[0]))
     max_cent_nodes[i] = max(nx.betweenness_centrality(G[i]).items(), key=lambda x: x[1])[0]
+
+  min_cent_nodes = {}
+  for i in range(graph_num):
+    print("node that has the smallest centrality in graph %d: %d" % (i, min(nx.betweenness_centrality(G[i]).items(), key=lambda x: x[1])[0]))
+    min_cent_nodes[i] = min(nx.betweenness_centrality(G[i]).items(), key=lambda x: x[1])[0]
 
   '''
   max_bet_nodes = {}
@@ -62,6 +74,7 @@ def generate_sample(n=100, m=2, graph_num=4):
     H = nx.compose(H, G[i+1])
 
   # producing artificially binomial distribution
+  '''
   for i in range(graph_num):
     for j in range(i+1, graph_num):
       rand1 = np.random.rand()
@@ -88,6 +101,34 @@ def generate_sample(n=100, m=2, graph_num=4):
       rand = np.random.rand()
       if rand < 0.5:
         H.add_edge(third_max_deg_nodes[i], third_max_deg_nodes[j]+j*n)
+  '''
+
+  for i in range(graph_num):
+    for j in range(i+1, graph_num):
+      rand1 = np.random.rand()
+      rand2 = np.random.rand()
+      rand3 = np.random.rand()
+      if rand1 < 0.5:
+        H.add_edge(min_deg_nodes[i], min_deg_nodes[j]+j*n)
+      if rand2 < 0.5:
+        H.add_edge(min_deg_nodes[i], second_min_deg_nodes[j]+j*n)
+      if rand3 < 0.5:
+        H.add_edge(min_deg_nodes[i], third_min_deg_nodes[j]+j*n)
+
+  for i in range(graph_num):
+    for j in range(i+1, graph_num):
+      rand1 = np.random.rand()
+      rand2 = np.random.rand()
+      if rand1 < 0.5:
+        H.add_edge(second_min_deg_nodes[i], second_min_deg_nodes[j]+j*n)
+      if rand2 < 0.5:
+        H.add_edge(second_min_deg_nodes[i], third_min_deg_nodes[j]+j*n)
+
+  for i in range(graph_num):
+    for j in range(i+1, graph_num):
+      rand = np.random.rand()
+      if rand < 0.5:
+        H.add_edge(third_min_deg_nodes[i], third_min_deg_nodes[j]+j*n)
 
   I = H.copy()
   for node in I.nodes():
@@ -95,6 +136,9 @@ def generate_sample(n=100, m=2, graph_num=4):
 
   for i in range(graph_num):
     I.nodes[max_cent_nodes[i]+i*n]['label'] = i
+
+  # for i in range(graph_num):
+  #   I.nodes[min_cent_nodes[i]+i*n]['label'] = i
 
   for node in H.nodes():
     H.nodes[node]['label'] = node // n

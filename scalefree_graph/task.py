@@ -1,3 +1,4 @@
+import random
 import torch_geometric
 from torch_geometric.nn import GCNConv
 from torch_geometric.utils.convert import from_networkx
@@ -37,16 +38,19 @@ def generate_figure(tmp, t, epoch):
   # print(tmp)
   # print(tmp.shape)
   fig = plt.figure()
+  fig.suptitle(f'Epoch: {epoch+1:03d}(with 4x labeled nodes)')
   ax = fig.add_subplot(111)
   ax.scatter(tmp[0], tmp[1], c=t, alpha=0.5, s=20)
   fig.savefig('./scalefree_graph/figures/epoch{}.png'.format(epoch+1))
 
 def main():
   n = 100
+  m = 2
+  graph_num = 4
   # a is full labeled graph, b is partial labeled graph
-  a,b = sample.generate_sample(n)
+  a,b = sample.generate_sample(n, m, graph_num)
   dataA = from_networkx(a)
-  _ = from_networkx(b)
+  dataB = from_networkx(b)
 
   device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
   model = Net().to(device)
@@ -55,18 +59,37 @@ def main():
 
   epoch_num = 300
   t = dataA.label
+
+  samples = []
+  for i, d in enumerate(dataB.label):
+    if d != -1:
+      samples.append(i)
+
   for epoch in range(epoch_num):
     optimizer.zero_grad()
     tmp, out = model(dataA)
-    # print(out)
-    # print(out.shape)
-    if (epoch+1)%50 == 0:
+
+    if (epoch+1)%50 == 0 or epoch == 0:
       generate_figure(tmp, t, epoch)
 
-    out = F.log_softmax(out, dim=1)
-    loss = F.cross_entropy(out, t)
+    # print(out)
+    # print(out.shape)
+
+    loss = F.nll_loss(out[samples], dataB.label[samples])
+    # loss = F.nll_loss(out, t)
+    # print(loss)
+    # print(loss.shape)
     loss.backward()
     optimizer.step()
     print(f'Epoch: {epoch+1:03d}, Loss: {loss:.4f}')
+
+  model.eval()
+  _, out = model(dataA)
+  pred = out.max(dim=1)[1]
+  err = 0
+  for i, p in enumerate(pred):
+    if p != t[i]:
+      err += 1
+  print(f"Accuracy: {(1 - err / len(pred))*100:.2f}%")
 
 main()
