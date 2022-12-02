@@ -11,7 +11,7 @@ class Net(torch.nn.Module):
   def __init__(self):
     super(Net, self).__init__()
     n = 100
-    hidden_layer1 = 34
+    hidden_layer1 = 20
     hidden_layer2 = 4
     output_layer = 2
     self.conv1 = GCNConv(n, hidden_layer1)
@@ -38,10 +38,10 @@ def generate_figure(tmp, t, epoch):
   # print(tmp)
   # print(tmp.shape)
   fig = plt.figure()
-  fig.suptitle(f'Epoch: {epoch+1:03d}(with 4x labeled nodes)')
+  fig.suptitle(f'Epoch: {epoch+1:03d}(with fulle labeled nodes)')
   ax = fig.add_subplot(111)
   ax.scatter(tmp[0], tmp[1], c=t, alpha=0.5, s=20)
-  fig.savefig('./scalefree_graph/figures/epoch{}.png'.format(epoch+1))
+  fig.savefig('./scalefree_graph/figures/epoch{}_100.png'.format(epoch+1))
 
 def main():
   n = 100
@@ -75,8 +75,8 @@ def main():
     # print(out)
     # print(out.shape)
 
-    loss = F.nll_loss(out[samples], dataB.label[samples])
-    # loss = F.nll_loss(out, t)
+    # loss = F.nll_loss(out[samples], dataB.label[samples])
+    loss = F.nll_loss(out, t)
     # print(loss)
     # print(loss.shape)
     loss.backward()
