@@ -43,12 +43,26 @@ def generate_sample(n=100, m=2, graph_num=4):
 
   max_cent_nodes = {}
   for i in range(graph_num):
-    print("node that has the largest centrality in graph %d: %d" % (i, max(nx.betweenness_centrality(G[i]).items(), key=lambda x: x[1])[0]))
+    # print("node that has the largest centrality in graph %d: %d" % (i, max(nx.betweenness_centrality(G[i]).items(), key=lambda x: x[1])[0]))
     max_cent_nodes[i] = max(nx.betweenness_centrality(G[i]).items(), key=lambda x: x[1])[0]
+
+  cent_order_list = []
+  for i in range(n):
+    tmp = []
+    for j in range(graph_num):
+      tmp.append(sorted(dict(G[j].degree()).items(), key=lambda x: x[1], reverse=True)[i][0])
+    cent_order_list.append(tmp)
+
+  if cent_order_list[0][0] != max(dict(G[0].degree()).items(), key=lambda x: x[1])[0]:
+    print("error")
+
+  for i in range(n):
+    for j in range(graph_num):
+      cent_order_list[i][j] += j*n
 
   min_cent_nodes = {}
   for i in range(graph_num):
-    print("node that has the smallest centrality in graph %d: %d" % (i, min(nx.betweenness_centrality(G[i]).items(), key=lambda x: x[1])[0]))
+    # print("node that has the smallest centrality in graph %d: %d" % (i, min(nx.betweenness_centrality(G[i]).items(), key=lambda x: x[1])[0]))
     min_cent_nodes[i] = min(nx.betweenness_centrality(G[i]).items(), key=lambda x: x[1])[0]
 
   '''
@@ -164,4 +178,4 @@ def generate_sample(n=100, m=2, graph_num=4):
   plt.show()
   '''
 
-  return H, I
+  return H, I, cent_order_list

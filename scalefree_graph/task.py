@@ -11,7 +11,7 @@ class Net(torch.nn.Module):
   def __init__(self):
     super(Net, self).__init__()
     n = 100
-    hidden_layer1 = 20
+    hidden_layer1 = 32
     hidden_layer2 = 4
     output_layer = 2
     self.conv1 = GCNConv(n, hidden_layer1)
@@ -48,7 +48,7 @@ def main():
   m = 2
   graph_num = 4
   # a is full labeled graph, b is partial labeled graph
-  a,b = sample.generate_sample(n, m, graph_num)
+  a,b,_ = sample.generate_sample(n, m, graph_num)
   dataA = from_networkx(a)
   dataB = from_networkx(b)
 
@@ -64,6 +64,9 @@ def main():
   for i, d in enumerate(dataB.label):
     if d != -1:
       samples.append(i)
+  # for i in range(10):
+  #   for j in c[i]:
+  #     samples.append(j)
 
   for epoch in range(epoch_num):
     optimizer.zero_grad()
@@ -75,8 +78,8 @@ def main():
     # print(out)
     # print(out.shape)
 
-    # loss = F.nll_loss(out[samples], dataB.label[samples])
-    loss = F.nll_loss(out, t)
+    loss = F.nll_loss(out[samples], dataA.label[samples])
+    # loss = F.nll_loss(out, t)
     # print(loss)
     # print(loss.shape)
     loss.backward()
