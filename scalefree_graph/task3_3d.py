@@ -9,8 +9,8 @@ class Net(torch.nn.Module):
   def __init__(self, n):
     super(Net, self).__init__()
     hidden_layer1 = 16
-    hidden_layer2 = 4
-    output_layer = 2
+    hidden_layer2 = 8
+    output_layer = 3
     self.conv1 = GCNConv(n, hidden_layer1)
     self.conv2 = GCNConv(hidden_layer1, hidden_layer2)
     self.conv3 = GCNConv(hidden_layer2, output_layer)
@@ -30,14 +30,14 @@ class Net(torch.nn.Module):
     return x, y
 
 def main():
-  max_nodes_per_class = 500
+  max_nodes_per_class = 250
   min_nodes_per_class = 20
   guarantee = {}
   assurance = {}
   threshold = 0.8
   for n in range(min_nodes_per_class, max_nodes_per_class+1, 5):
     m = 2
-    graph_num = 4
+    graph_num = 8
     # a is full labeled graph, b is partial labeled graph
     a,b,c = sample.generate_sample(n, m, graph_num)
     dataA = from_networkx(a)
@@ -100,7 +100,7 @@ def main():
   ax.set_xlabel('Number of nodes per class')
   ax.set_ylabel('Ratio of labeled nodes')
   ax.grid(axis='y', color='gray', linestyle='--')
-  fig.savefig('./scalefree_graph/task3_a.png')
+  fig.savefig('./scalefree_graph/task3_3d_a.png')
 
   fig2 = plt.figure()
   fig2.suptitle('The number of labeled nodes to guarantee 0.8 accuracy')
@@ -109,6 +109,6 @@ def main():
   ax.set_xlabel('Number of nodes per class')
   ax.set_ylabel('Number of labeled nodes')
   ax.grid(axis='y', color='gray', linestyle='--')
-  fig2.savefig('./scalefree_graph/task3_b.png')
+  fig2.savefig('./scalefree_graph/task3_3d_b.png')
 
 main()
