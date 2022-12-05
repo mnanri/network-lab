@@ -167,4 +167,4 @@ def generate_sample(n=100, m=2, graph_num=4):
 
   return H, I, cent_order_list
 
-# generate_sample()
+generate_sample()

@@ -1,7 +1,7 @@
 from torch_geometric.nn import GCNConv
 from torch_geometric.utils.convert import from_networkx
 import torch.nn.functional as F
-import sample
+import sample2
 import torch
 import matplotlib.pyplot as plt
 
@@ -9,8 +9,8 @@ class Net(torch.nn.Module):
   def __init__(self, n):
     super(Net, self).__init__()
     hidden_layer1 = 16
-    hidden_layer2 = 8
-    output_layer = 3
+    hidden_layer2 = 4
+    output_layer = 2
     self.conv1 = GCNConv(n, hidden_layer1)
     self.conv2 = GCNConv(hidden_layer1, hidden_layer2)
     self.conv3 = GCNConv(hidden_layer2, output_layer)
@@ -30,23 +30,22 @@ class Net(torch.nn.Module):
     return x, y
 
 def main():
-  max_nodes_per_class = 500
-  min_nodes_per_class = 20
+  max_n2_nodes_per_class = 125
+  min_n2_nodes_per_class = 20
   guarantee = {}
-  assurance = {}
   threshold = 0.8
-  for n in range(min_nodes_per_class, max_nodes_per_class+1, 5):
+  for n2 in range(min_n2_nodes_per_class, max_n2_nodes_per_class+1, 5):
+    n1 = n2 * 2
     m = 2
-    graph_num = 8
-    # a is full labeled graph, b is partial labeled graph
-    a,b,c = sample.generate_sample(n, m, graph_num)
+    graph_num = 4
+    large_graph_num = 2
+    a,_,lc,sc = sample2.generate_umblance_network(n1, n2, m, graph_num, large_graph_num)
     dataA = from_networkx(a)
-    _ = from_networkx(b)
 
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-    model = Net(n).to(device)
+    model = Net(n1).to(device)
 
-    for cnt in range(n):
+    for cnt in range(n1):
       model.train()
       optimizer = torch.optim.Adam(model.parameters(), lr=0.01, weight_decay=5e-4)
 
@@ -55,61 +54,43 @@ def main():
 
       samples = []
       for i in range(cnt):
-        for j in c[i]:
+        for j in lc[i]:
           samples.append(j)
-      # for i, d in enumerate(dataB.label):
-      #   if d != -1:
-      #     samples.append(i)
+
+      for i in range(cnt//(n1//n2)):
+        for j in sc[i]:
+          samples.append(j)
 
       for _ in range(epoch_num):
         optimizer.zero_grad()
-        _, out = model(dataA)
-
-        # print(out)
-        # print(out.shape)
-
-        loss = F.nll_loss(out[samples], dataA.label[samples])
-        # loss = F.nll_loss(out, t)
-        # print(loss)
-        # print(loss.shape)
+        _, y = model(dataA)
+        loss = F.nll_loss(y[samples], t[samples])
         loss.backward()
         optimizer.step()
-        # print(f'Epoch: {epoch+1:03d}, Loss: {loss:.4f}')
 
       model.eval()
       _, out = model(dataA)
       pred = out.max(dim=1)[1]
       err = 0
-      for i, p in enumerate(pred):
+      for i,p in enumerate(pred):
         if p != t[i]:
           err += 1
-      # print(f"({cnt+1}x{graph_num} nodes of {n}x{graph_num} is labeled) Accuracy: {(1 - err / len(pred))*100:.2f}%")
+
       if 1 - err / len(pred) >= threshold:
-        guarantee[n] = (cnt)/n
-        assurance[n] = cnt
-        print(f"({cnt}x{graph_num} nodes of {n}x{graph_num} is labeled) Accuracy is guaranteed to be above {threshold*100}%")
+        guarantee[n2] = (cnt*large_graph_num+((cnt//(n1//n2))*(graph_num-large_graph_num)))/(n1*large_graph_num+n2*(graph_num-large_graph_num))
+        print(f'Guarantee {threshold} accuracy with {cnt*large_graph_num+((cnt//(n1//n2))*(graph_num-large_graph_num))} labeled nodes in {n1*large_graph_num+n2*(graph_num-large_graph_num)} nodes')
         break
-      elif cnt == n-1:
-        guarantee[n] = 1.0
-        assurance[n] = cnt
-        print("unexpected: cannot guarantee accuracy")
+      elif cnt == n1-1:
+        guarantee[n2] = 1.0
+        print("unexpected: cannot guarantee 0.8 accuracy")
 
   fig = plt.figure()
   fig.suptitle('The ratio of labeled nodes to guarantee 0.8 accuracy')
   ax = fig.add_subplot(111)
   ax.plot(guarantee.keys(), guarantee.values())
-  ax.set_xlabel('Number of nodes per class')
+  ax.set_xlabel(f'Number of nodes per small class (large class has {n1//n2}times nodes)')
   ax.set_ylabel('Ratio of labeled nodes')
   ax.grid(axis='y', color='gray', linestyle='--')
-  fig.savefig('./scalefree_graph/task3_figures/task3_3d_a.png')
-
-  fig2 = plt.figure()
-  fig2.suptitle('The number of labeled nodes to guarantee 0.8 accuracy')
-  ax = fig2.add_subplot(111)
-  ax.plot(assurance.keys(), assurance.values())
-  ax.set_xlabel('Number of nodes per class')
-  ax.set_ylabel('Number of labeled nodes')
-  ax.grid(axis='y', color='gray', linestyle='--')
-  fig2.savefig('./scalefree_graph/task3_figures/task3_3d_b.png')
+  fig.savefig(f'./scalefree_graph/task3_figures/task3_{n1//n2}times_a.png')
 
 main()

@@ -1,17 +1,16 @@
 from torch_geometric.nn import GCNConv
 from torch_geometric.utils.convert import from_networkx
 import torch.nn.functional as F
-import sample
+import sample2
 import torch
 import matplotlib.pyplot as plt
 
 class Net(torch.nn.Module):
-  def __init__(self):
+  def __init__(self, n):
     super(Net, self).__init__()
-    n = 100
     hidden_layer1 = 32
-    hidden_layer2 = 8
-    output_layer = 3
+    hidden_layer2 = 4
+    output_layer = 2
     self.conv1 = GCNConv(n, hidden_layer1)
     self.conv2 = GCNConv(hidden_layer1, hidden_layer2)
     self.conv3 = GCNConv(hidden_layer2, output_layer)
@@ -31,19 +30,19 @@ class Net(torch.nn.Module):
     return x, y
 
 def main():
-  n = 100
+  n1 = 100
+  n2 = 75
   m = 2
-  graph_num = 8
-  # a is full labeled graph, b is partial labeled graph
-  a,b,c = sample.generate_sample(n, m, graph_num)
+  graph_num = 4
+  large_graph_num = 2
+  a,_,lc,sc = sample2.generate_umblance_network(n1, n2, m, graph_num, large_graph_num)
   dataA = from_networkx(a)
-  _ = from_networkx(b)
 
   device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-  model = Net().to(device)
+  model = Net(n1).to(device)
 
   acc = {}
-  for cnt in range(n):
+  for cnt in range(n1):
     model.train()
     optimizer = torch.optim.Adam(model.parameters(), lr=0.01, weight_decay=5e-4)
 
@@ -52,41 +51,41 @@ def main():
 
     samples = []
     for i in range(cnt):
-      for j in c[i]:
+      for j in lc[i]:
+        samples.append(j)
+
+    for i in range(cnt//(n1//n2)):
+      if n1//n2 == 1:
+        if i == n2:
+          break
+      for j in sc[i]:
         samples.append(j)
 
     for _ in range(epoch_num):
       optimizer.zero_grad()
       _, out = model(dataA)
-      # print(out)
-      # print(out.shape)
 
-      loss = F.nll_loss(out[samples], dataA.label[samples])
-      # loss = F.nll_loss(out, t)
-      # print(loss)
-      # print(loss.shape)
+      loss = F.nll_loss(out[samples], t[samples])
       loss.backward()
       optimizer.step()
-      # print(f'Epoch: {epoch+1:03d}, Loss: {loss:.4f}')
 
     model.eval()
     _, out = model(dataA)
     pred = out.max(dim=1)[1]
     err = 0
-    for i, p in enumerate(pred):
+    for i,p in enumerate(pred):
       if p != t[i]:
         err += 1
-    print(f"({cnt}x{graph_num} nodes is labeled) Accuracy: {(1 - err / len(pred))*100:.2f}%")
-    acc[cnt+1] = (1 - err / len(pred))
+    print(f"({cnt}x{graph_num} and {cnt//(n1//n2)}x{graph_num} nodes labeled) accuracy: {(1-err/len(pred))*100:.2f}%")
+    acc[cnt+1] = (1-err/len(pred))
 
-  # print(acc)
   fig = plt.figure()
-  fig.suptitle('Accuracy and Number of Labeled Nodes(n=100, c=8)')
+  fig.suptitle(f'Accuracy and Number of Labeled Nodes(n1={n1}, n2={n2}) per Class')
   ax = fig.add_subplot(111)
   ax.plot(acc.keys(), acc.values())
   ax.set_xlabel('Number of Labeled Nodes per Class')
   ax.set_ylabel('Accuracy')
   ax.grid(axis='y', color='gray', linestyle='--')
-  fig.savefig('./scalefree_graph/task2_figures/task2_3d_saved.png')
+  fig.savefig(f'./scalefree_graph/task2_figures/task2_l{n1}_s{n2}_saved.png')
 
 main()

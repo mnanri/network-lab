@@ -6,9 +6,8 @@ import torch
 import matplotlib.pyplot as plt
 
 class Net(torch.nn.Module):
-  def __init__(self):
+  def __init__(self, n):
     super(Net, self).__init__()
-    n = 100
     hidden_layer1 = 32
     hidden_layer2 = 4
     output_layer = 2
@@ -40,7 +39,7 @@ def main():
   _ = from_networkx(b)
 
   device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-  model = Net().to(device)
+  model = Net(n).to(device)
 
   acc = {}
   for cnt in range(n):
@@ -54,9 +53,6 @@ def main():
     for i in range(cnt):
       for j in c[i]:
         samples.append(j)
-    # for i, d in enumerate(dataB.label):
-    #   if d != -1:
-    #     samples.append(i)
 
     for _ in range(epoch_num):
       optimizer.zero_grad()
@@ -85,12 +81,12 @@ def main():
 
   # print(acc)
   fig = plt.figure()
-  fig.suptitle('Accuracy and Number of Labeled Nodes(n=100) per Class')
+  fig.suptitle(f'Accuracy and Number of Labeled Nodes(n={n}) per Class')
   ax = fig.add_subplot(111)
   ax.plot(acc.keys(), acc.values())
   ax.set_xlabel('Number of Labeled Nodes per Class')
   ax.set_ylabel('Accuracy')
   ax.grid(axis='y', color='gray', linestyle='--')
-  fig.savefig('./scalefree_graph/task2_figures/task2.png')
+  fig.savefig(f'./scalefree_graph/task2_figures/task2_n{n}.png')
 
 main()

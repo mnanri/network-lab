@@ -76,6 +76,10 @@ def generate_umblance_network(n1=100, n2=25, m=2, graph_num=4, large_graph_num=2
   if small_graph_cent_order_list[0][0] != max(dict(G[large_graph_num].degree()).items(), key=lambda x: x[1])[0]:
     print("error")
 
+  for i in range(n2):
+    for j in range(small_graph_num):
+      small_graph_cent_order_list[i][j] += j*n2 + large_graph_num*n1
+
   '''
   max_bet_nodes = {}
   for i in range(graph_num):
@@ -180,12 +184,12 @@ def generate_umblance_network(n1=100, n2=25, m=2, graph_num=4, large_graph_num=2
   nx.draw(I, pos, node_size=20, alpha=0.5, node_color=pattern, edge_color='gray', with_labels=False)
   plt.show()
   '''
-
+  '''
   pos = nx.circular_layout(H)
   pattern = [ 'blue' if node < n1 else 'green' if node < 2*n1 else 'orange' if node < n2+2*n1 else 'red' for node in H.nodes() ]
   nx.draw(H, pos, node_size=20, alpha=0.5, node_color=pattern, edge_color='gray', with_labels=False)
   plt.show()
-
+  '''
   return H, I, large_graph_cent_order_list, small_graph_cent_order_list
 
 generate_umblance_network()

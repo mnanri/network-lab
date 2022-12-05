@@ -57,14 +57,10 @@ def main():
       for i in range(cnt):
         for j in c[i]:
           samples.append(j)
-      # for i, d in enumerate(dataB.label):
-      #   if d != -1:
-      #     samples.append(i)
 
       for _ in range(epoch_num):
         optimizer.zero_grad()
         _, out = model(dataA)
-
         # print(out)
         # print(out.shape)
 
@@ -92,6 +88,7 @@ def main():
       elif cnt == n-1:
         guarantee[n] = 1.0
         assurance[n] = cnt
+        print("unexpected: cannot guarantee accuracy")
 
   fig = plt.figure()
   fig.suptitle('The ratio of labeled nodes to guarantee 0.8 accuracy')
@@ -100,7 +97,7 @@ def main():
   ax.set_xlabel('Number of nodes per class')
   ax.set_ylabel('Ratio of labeled nodes')
   ax.grid(axis='y', color='gray', linestyle='--')
-  fig.savefig('./scalefree_graph/task3_a.png')
+  fig.savefig('./scalefree_graph/task3_figures/task3_a.png')
 
   fig2 = plt.figure()
   fig2.suptitle('The number of labeled nodes to guarantee 0.8 accuracy')
@@ -109,6 +106,6 @@ def main():
   ax.set_xlabel('Number of nodes per class')
   ax.set_ylabel('Number of labeled nodes')
   ax.grid(axis='y', color='gray', linestyle='--')
-  fig2.savefig('./scalefree_graph/task3_b.png')
+  fig2.savefig('./scalefree_graph/task3_figures/task3_b.png')
 
 main()
