@@ -8,9 +8,8 @@ import torch
 import matplotlib.pyplot as plt
 
 class Net(torch.nn.Module):
-  def __init__(self):
+  def __init__(self, n):
     super(Net, self).__init__()
-    n = 100
     hidden_layer1 = 32
     hidden_layer2 = 4
     output_layer = 2
@@ -38,10 +37,10 @@ def generate_figure(tmp, t, epoch):
   # print(tmp)
   # print(tmp.shape)
   fig = plt.figure()
-  fig.suptitle(f'Epoch: {epoch+1:03d}(with fulle labeled nodes)')
+  fig.suptitle(f'Epoch: {epoch+1:03d}(with a labeled node per class)')
   ax = fig.add_subplot(111)
   ax.scatter(tmp[0], tmp[1], c=t, alpha=0.5, s=20)
-  fig.savefig('./scalefree_graph/figures/epoch{}_100.png'.format(epoch+1))
+  fig.savefig('./scalefree_graph/task_figures/n100_c4_l100/epoch{}.png'.format(epoch+1))
 
 def main():
   n = 100
@@ -53,33 +52,29 @@ def main():
   dataB = from_networkx(b)
 
   device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-  model = Net().to(device)
+  model = Net(n).to(device)
   model.train()
   optimizer = torch.optim.Adam(model.parameters(), lr=0.01, weight_decay=5e-4)
 
-  epoch_num = 300
+  epoch_num = 1
   t = dataA.label
 
   samples = []
   for i, d in enumerate(dataB.label):
     if d != -1:
       samples.append(i)
-  # for i in range(10):
-  #   for j in c[i]:
-  #     samples.append(j)
 
   for epoch in range(epoch_num):
     optimizer.zero_grad()
     tmp, out = model(dataA)
+    # print(out)
+    # print(out.shape)
 
     if (epoch+1)%50 == 0 or epoch == 0:
       generate_figure(tmp, t, epoch)
 
-    # print(out)
-    # print(out.shape)
-
-    loss = F.nll_loss(out[samples], dataA.label[samples])
-    # loss = F.nll_loss(out, t)
+    # loss = F.nll_loss(out[samples], dataA.label[samples])
+    loss = F.nll_loss(out, t)
     # print(loss)
     # print(loss.shape)
     loss.backward()

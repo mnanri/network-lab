@@ -6,9 +6,8 @@ import torch
 import matplotlib.pyplot as plt
 
 class Net(torch.nn.Module):
-  def __init__(self):
+  def __init__(self,n):
     super(Net, self).__init__()
-    n = 100
     hidden_layer1 = 32
     hidden_layer2 = 8
     output_layer = 3
@@ -36,10 +35,10 @@ def generate_figure(tmp, t, epoch):
   # print(tmp)
   # print(tmp.shape)
   fig = plt.figure()
-  fig.suptitle(f'Epoch: {epoch+1:03d}(with fulle labeled nodes)')
+  fig.suptitle(f'Epoch: {epoch+1:03d}(with n labeled nodes per class)')
   ax = fig.add_subplot(projection='3d')
   ax.scatter(tmp[0], tmp[1], tmp[2], c=t, alpha=0.5, s=20)
-  fig.savefig('./scalefree_graph/figures/epoch{}_100_100_3d.png'.format(epoch+1))
+  fig.savefig('./scalefree_graph/task_3d_figures/n100_c8_l100/epoch{}.png'.format(epoch+1))
 
 def main():
   n = 100
@@ -51,11 +50,11 @@ def main():
   dataB = from_networkx(b)
 
   device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-  model = Net().to(device)
+  model = Net(n).to(device)
   model.train()
   optimizer = torch.optim.Adam(model.parameters(), lr=0.01, weight_decay=5e-4)
 
-  epoch_num = 600
+  epoch_num = 1
   t = dataA.label
 
   samples = []
