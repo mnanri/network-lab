@@ -85,12 +85,12 @@ def main():
 
   # print(acc)
   fig = plt.figure()
-  fig.suptitle('Accuracy and Number of Labeled Nodes(n=100)')
+  fig.suptitle('Accuracy and Number of Labeled Nodes(n=100) per Class')
   ax = fig.add_subplot(111)
   ax.plot(acc.keys(), acc.values())
   ax.set_xlabel('Number of Labeled Nodes per Class')
   ax.set_ylabel('Accuracy')
   ax.grid(axis='y', color='gray', linestyle='--')
-  fig.savefig('./scalefree_graph/task2.png')
+  fig.savefig('./scalefree_graph/task2_figures/task2.png')
 
 main()

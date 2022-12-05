@@ -88,6 +88,6 @@ def main():
   ax.set_xlabel('Number of Labeled Nodes per Class')
   ax.set_ylabel('Accuracy')
   ax.grid(axis='y', color='gray', linestyle='--')
-  fig.savefig('./scalefree_graph/task2_3d.png')
+  fig.savefig('./scalefree_graph/task2_figures/task2_3d_saved.png')
 
 main()
