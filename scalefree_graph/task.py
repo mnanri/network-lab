@@ -51,7 +51,7 @@ def main():
   lg = 2
   # a is full labeled graph, b is partial labeled graph
   # a,b,_ = sample.generate_sample(n, m, graph_num)
-  a,b,_,_ = sample2.generate_umblance_network(n, n2, m, graph_num, lg)
+  a,b,_,_ = sample2.generate_umblance_sample(n, n2, m, graph_num, lg)
   dataA = from_networkx(a)
   dataB = from_networkx(b)
 

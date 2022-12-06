@@ -1,14 +1,14 @@
 from torch_geometric.nn import GCNConv
 from torch_geometric.utils.convert import from_networkx
 import torch.nn.functional as F
-import sample2
+import sample
 import torch
 import matplotlib.pyplot as plt
 
 class Net(torch.nn.Module):
   def __init__(self, n):
     super(Net, self).__init__()
-    hidden_layer1 = 16
+    hidden_layer1 = 32
     hidden_layer2 = 4
     output_layer = 2
     self.conv1 = GCNConv(n, hidden_layer1)
@@ -30,22 +30,22 @@ class Net(torch.nn.Module):
     return x, y
 
 def main():
-  max_n2_nodes_per_class = 250
-  min_n2_nodes_per_class = 20
-  guarantee = {}
-  threshold = 0.8
-  for n2 in range(min_n2_nodes_per_class, max_n2_nodes_per_class+1, 2):
-    n1 = n2 * 2
-    m = 2
-    graph_num = 4
-    large_graph_num = 2
-    a,_,lc,sc = sample2.generate_umblance_sample(n1, n2, m, graph_num, large_graph_num)
+  n = 200
+  m = 2
+  graph_num = 4
+
+  roop = 20
+  acc_mean = {}
+  for i in range(n):
+    acc_mean[i] = []
+  for r in range(roop):
+    a,_,c = sample.generate_sample(n, m, graph_num)
     dataA = from_networkx(a)
 
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-    model = Net(n1).to(device)
+    model = Net(n).to(device)
 
-    for cnt in range(n1):
+    for cnt in range(n):
       model.train()
       optimizer = torch.optim.Adam(model.parameters(), lr=0.01, weight_decay=5e-4)
 
@@ -54,17 +54,13 @@ def main():
 
       samples = []
       for i in range(cnt):
-        for j in lc[i]:
-          samples.append(j)
-
-      for i in range(cnt//(n1//n2)):
-        for j in sc[i]:
+        for j in c[i]:
           samples.append(j)
 
       for _ in range(epoch_num):
         optimizer.zero_grad()
-        _, y = model(dataA)
-        loss = F.nll_loss(y[samples], t[samples])
+        _, out = model(dataA)
+        loss = F.nll_loss(out[samples], t[samples])
         loss.backward()
         optimizer.step()
 
@@ -75,22 +71,17 @@ def main():
       for i,p in enumerate(pred):
         if p != t[i]:
           err += 1
+      acc_mean[cnt].append(1 - err/len(pred))
 
-      if 1 - err / len(pred) >= threshold:
-        guarantee[n2] = (cnt*large_graph_num+((cnt//(n1//n2))*(graph_num-large_graph_num)))/(n1*large_graph_num+n2*(graph_num-large_graph_num))
-        print(f'Guarantee {threshold} accuracy with {cnt*large_graph_num+((cnt//(n1//n2))*(graph_num-large_graph_num))} labeled nodes in {n1*large_graph_num+n2*(graph_num-large_graph_num)} nodes')
-        break
-      elif cnt == n1-1:
-        guarantee[n2] = 1.0
-        print("unexpected: cannot guarantee 0.8 accuracy")
+    print(f'roop {r+1} done')
 
   fig = plt.figure()
-  fig.suptitle('The ratio of labeled nodes to guarantee 0.8 accuracy')
+  fig.suptitle(f'Accuracy and Number of Labeled Nodes(n={n}) per Class\n(claculated mean of {roop} samples)')
   ax = fig.add_subplot(111)
-  ax.plot(guarantee.keys(), guarantee.values())
-  ax.set_xlabel(f'Number of nodes per small class (large class has {n1//n2}times nodes)')
-  ax.set_ylabel('Ratio of labeled nodes')
+  ax.plot([i for i in range(n)], [sum(acc_mean[i])/len(acc_mean[i]) for i in range(n)])
+  ax.set_xlabel('Number of Labeled Nodes')
+  ax.set_ylabel('Accuracy')
   ax.grid(axis='y', color='gray', linestyle='--')
-  fig.savefig(f'./scalefree_graph/task3_figures/task3_{n1//n2}times_a.png')
+  fig.savefig(f'./scalefree_graph/task2_figures/task2_mean_n{n}.png')
 
 main()

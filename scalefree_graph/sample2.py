@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import torch
 
-def generate_umblance_network(n1=100, n2=25, m=2, graph_num=4, large_graph_num=2):
+def generate_umblance_sample(n1=100, n2=25, m=2, graph_num=4, large_graph_num=2):
   G = []
   small_graph_num = graph_num - large_graph_num
   for i in range(large_graph_num):
@@ -192,4 +192,4 @@ def generate_umblance_network(n1=100, n2=25, m=2, graph_num=4, large_graph_num=2
   '''
   return H, I, large_graph_cent_order_list, small_graph_cent_order_list
 
-generate_umblance_network()
+generate_umblance_sample()

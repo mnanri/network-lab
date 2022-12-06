@@ -77,7 +77,7 @@ def main():
       if p != t[i]:
         err += 1
     print(f"({cnt}x{graph_num} nodes is labeled) Accuracy: {(1 - err / len(pred))*100:.2f}%")
-    acc[cnt+1] = (1 - err / len(pred))
+    acc[cnt] = (1 - err / len(pred))
 
   # print(acc)
   fig = plt.figure()

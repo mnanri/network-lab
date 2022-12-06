@@ -164,7 +164,7 @@ def generate_sample(n=100, m=2, graph_num=4):
   nx.draw(H, pos, node_size=20, alpha=0.5, node_color=pattern, edge_color='gray', with_labels=False)
   plt.show()
   '''
-
+  # print(H.number_of_nodes())
   return H, I, cent_order_list
 
 generate_sample()
