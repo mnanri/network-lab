@@ -9,8 +9,8 @@ class Net(torch.nn.Module):
   def __init__(self, n):
     super(Net, self).__init__()
     hidden_layer1 = 32
-    hidden_layer2 = 4
-    output_layer = 2
+    hidden_layer2 = 8
+    output_layer = 3
     self.conv1 = GCNConv(n, hidden_layer1)
     self.conv2 = GCNConv(hidden_layer1, hidden_layer2)
     self.conv3 = GCNConv(hidden_layer2, output_layer)
@@ -30,14 +30,14 @@ class Net(torch.nn.Module):
     return x, y
 
 def main():
-  n = 50
+  n = 100
   m = 2
-  graph_num = 4
+  graph_num = 8
 
-  roop = 80
-  acc_mean = {}
+  roop = 40
+  acc_list = {}
   for i in range(n):
-    acc_mean[i] = []
+    acc_list[i] = []
   for r in range(roop):
     a,_,c = sample.generate_sample(n, m, graph_num)
     dataA = from_networkx(a)
@@ -59,29 +59,27 @@ def main():
 
       for _ in range(epoch_num):
         optimizer.zero_grad()
-        _, out = model(dataA)
-        loss = F.nll_loss(out[samples], t[samples])
+        output = model(dataA)[1]
+        loss = F.nll_loss(output[samples], t[samples])
         loss.backward()
         optimizer.step()
 
       model.eval()
-      _, out = model(dataA)
-      pred = out.max(dim=1)[1]
-      err = 0
-      for i,p in enumerate(pred):
-        if p != t[i]:
-          err += 1
-      acc_mean[cnt].append(1 - err/len(pred))
+      _, output = model(dataA)
+      pred = output.max(dim=1)[1]
+      acc = pred.eq(t).sum().item() / t.size(0)
+      acc_list[cnt].append(acc)
+      # print(f"roop: {r+1}/{roop}, cnt: {cnt}, acc: {acc}")
 
-    print(f'roop {r+1} done')
+    print(f"roop: {r+1}/{roop} finished")
 
   fig = plt.figure()
-  fig.suptitle(f'Accuracy and Number of Labeled Nodes(n={n}) per Class\n(claculated mean of {roop} samples)')
+  fig.suptitle(f'Accuracy and Number of Labeled Nodes(n={n}, c={graph_num})\n(calculate mean of {roop} samples)')
   ax = fig.add_subplot(111)
-  ax.plot([i for i in range(n)], [sum(acc_mean[i])/len(acc_mean[i]) for i in range(n)])
+  ax.plot(list(acc_list.keys()), [sum(acc_list[i])/len(acc_list[i]) for i in acc_list.keys()])
   ax.set_xlabel('Number of Labeled Nodes')
   ax.set_ylabel('Accuracy')
-  ax.grid(axis='y', color='gray', linestyle='--')
-  fig.savefig(f'./scalefree_graph/task2_figures/task2_mean_n{n}.png')
+  ax.grid(axis='y', color='gray', linestyle='dashed')
+  fig.savefig(f'./scalefree_graph/task2_figures/task2_3d_mean_n{n}.png')
 
 main()

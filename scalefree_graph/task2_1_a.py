@@ -1,7 +1,7 @@
 from torch_geometric.nn import GCNConv
 from torch_geometric.utils.convert import from_networkx
 import torch.nn.functional as F
-import sample
+import sample2
 import torch
 import matplotlib.pyplot as plt
 
@@ -30,22 +30,24 @@ class Net(torch.nn.Module):
     return x, y
 
 def main():
-  n = 50
+  n1 = 150
+  n2 = 50
   m = 2
   graph_num = 4
+  large_graph_num = 2
 
-  roop = 80
+  roop = 30
   acc_mean = {}
-  for i in range(n):
+  for i in range(n1):
     acc_mean[i] = []
   for r in range(roop):
-    a,_,c = sample.generate_sample(n, m, graph_num)
+    a,_,lc,sc = sample2.generate_umblance_sample(n1, n2, m, graph_num, large_graph_num)
     dataA = from_networkx(a)
 
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-    model = Net(n).to(device)
+    model = Net(n1).to(device)
 
-    for cnt in range(n):
+    for cnt in range(n1):
       model.train()
       optimizer = torch.optim.Adam(model.parameters(), lr=0.01, weight_decay=5e-4)
 
@@ -54,34 +56,40 @@ def main():
 
       samples = []
       for i in range(cnt):
-        for j in c[i]:
+        for j in lc[i]:
+          samples.append(j)
+
+      for i in range(cnt//(n1//n2)):
+        if i == n2:
+          break
+        for j in sc[i]:
           samples.append(j)
 
       for _ in range(epoch_num):
         optimizer.zero_grad()
-        _, out = model(dataA)
-        loss = F.nll_loss(out[samples], t[samples])
+        _, y = model(dataA)
+        loss = F.nll_loss(y[samples], t[samples])
         loss.backward()
         optimizer.step()
 
       model.eval()
-      _, out = model(dataA)
-      pred = out.max(dim=1)[1]
+      _, y = model(dataA)
+      pred = y.max(dim=1)[1]
       err = 0
       for i,p in enumerate(pred):
         if p != t[i]:
           err += 1
       acc_mean[cnt].append(1 - err/len(pred))
 
-    print(f'roop {r+1} done')
+    print(f"roop {r+1}/{roop} done")
 
   fig = plt.figure()
-  fig.suptitle(f'Accuracy and Number of Labeled Nodes(n={n}) per Class\n(claculated mean of {roop} samples)')
+  fig.suptitle(f'Accuracy and Number of Labeled Nodes(n1={n1}, n2={n2}) per Class\n(calculated mean of {roop} samples)')
   ax = fig.add_subplot(111)
-  ax.plot([i for i in range(n)], [sum(acc_mean[i])/len(acc_mean[i]) for i in range(n)])
-  ax.set_xlabel('Number of Labeled Nodes')
+  ax.plot([i for i in range(n1)], [sum(acc_mean[i])/len(acc_mean[i]) for i in range(n1)])
+  ax.set_xlabel(f'Number of Labeled Nodes per Large Class(small class is 1/{n1//n2})')
   ax.set_ylabel('Accuracy')
   ax.grid(axis='y', color='gray', linestyle='--')
-  fig.savefig(f'./scalefree_graph/task2_figures/task2_mean_n{n}.png')
+  fig.savefig(f'./scalefree_graph/task2_figures/task2_mean_l{n1}_s{n2}.png')
 
 main()
