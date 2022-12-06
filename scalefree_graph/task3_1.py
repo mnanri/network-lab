@@ -30,7 +30,7 @@ class Net(torch.nn.Module):
     return x, y
 
 def main():
-  max_n2_nodes_per_class = 125
+  max_n2_nodes_per_class = 250
   min_n2_nodes_per_class = 20
   guarantee = {}
   threshold = 0.8
