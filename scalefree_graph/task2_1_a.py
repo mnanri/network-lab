@@ -30,8 +30,8 @@ class Net(torch.nn.Module):
     return x, y
 
 def main():
-  n1 = 175
-  n2 = 25
+  n1 = 168
+  n2 = 28
   m = 2
   graph_num = 4
   large_graph_num = 2

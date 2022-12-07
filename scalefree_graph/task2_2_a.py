@@ -33,7 +33,7 @@ def main():
   n = 100
   m = 2
   graph_num = 4
-  link_level = 10
+  link_level = 75
 
   roop = 40
   acc_list = {}
@@ -83,4 +83,6 @@ def main():
   ax.set_xlabel('Number of Labeled Nodes')
   ax.set_ylabel('Accuracy')
   ax.grid(axis='y', color='gray', linestyle='dashed')
-  fig.savefig(f'./task2_mean_n{n}_link{link_level}.png')
+  fig.savefig(f'./scalefree_graph/task2_figures/task2_mean_n{n}_link{link_level}.png')
+
+main()
