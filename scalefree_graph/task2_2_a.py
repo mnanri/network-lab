@@ -33,7 +33,7 @@ def main():
   n = 100
   m = 2
   graph_num = 4
-  link_level = 75
+  link_level = 12
 
   roop = 40
   acc_list = {}
