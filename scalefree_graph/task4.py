@@ -31,7 +31,7 @@ class Net(torch.nn.Module):
     return x, y
 
 def main():
-  small_network_nodes_list = [100, 80, 66, 50, 40, 33, 28, 25, 20, 22, 18]
+  small_network_nodes_list = [100, 80, 66, 50, 40, 33, 28, 25, 22, 20, 18]
   # small_network_nodes_list = [100, 80, 66, 50]
   roop = 40
 
