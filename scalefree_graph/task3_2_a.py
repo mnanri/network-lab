@@ -4,6 +4,7 @@ import torch.nn.functional as F
 import sample3
 import torch
 import matplotlib.pyplot as plt
+import numpy as np
 
 class Net(torch.nn.Module):
   def __init__(self, n):
@@ -33,20 +34,20 @@ def main():
   n = 100
   m = 2
   graph_num = 4
-  max_link_level = 96
+  max_link_level = 97
   min_link_level = 3
-  roop = 20
+  roop = 40
 
   guarantee_ratio_list = {}
   guarantee_number_list = {}
-  for i in range(min_link_level, max_link_level+1, 3):
+  for i in range(min_link_level, max_link_level+1, 2):
     guarantee_ratio_list[i] = []
     guarantee_number_list[i] = []
 
   threshold = 0.8
 
   for r in range(roop):
-    for link_level in range(min_link_level, max_link_level+1, 3):
+    for link_level in range(min_link_level, max_link_level+1, 2):
       a,_,c = sample3.generate_flexible_linked_sample(n, m, graph_num, link_level)
       dataA = from_networkx(a)
 
@@ -97,8 +98,19 @@ def main():
   ax.plot(guarantee_ratio_list.keys(), [sum(v)/len(v) for v in guarantee_ratio_list.values()])
   ax.set_xlabel('Number of Probabilistic Link per 2 Classes')
   ax.set_ylabel('Ratio of Labeled Nodes')
+  ax.grid(axis='x', color='gray', linestyle='--')
   ax.grid(axis='y', color='gray', linestyle='--')
   fig.savefig(f'./scalefree_graph/task3_figures/task3_link_mean_n{n}_a.png')
+
+  fig1 = plt.figure()
+  fig1.suptitle(f'The Ratio of Labeled Nodes to Guarantee Accuracy {threshold*100}% in n={n}\n(calculate median of {roop} samples)')
+  ax1 = fig1.add_subplot(111)
+  ax1.plot(guarantee_ratio_list.keys(), np.median([v for v in guarantee_ratio_list.values()], axis=1))
+  ax1.set_xlabel('Number of Probabilistic Link per 2 Classes')
+  ax1.set_ylabel('Ratio of Labeled Nodes')
+  ax1.grid(axis='x', color='gray', linestyle='--')
+  ax1.grid(axis='y', color='gray', linestyle='--')
+  fig1.savefig(f'./scalefree_graph/task3_figures/task3_link_med_n{n}_a.png')
 
   fig2 = plt.figure()
   fig2.suptitle(f'The Number of Labeled Nodes to Guarantee Accuracy {threshold*100}% in n={n}\n(calculate mean of {roop} samples)')
@@ -106,7 +118,18 @@ def main():
   ax2.plot(guarantee_number_list.keys(), [sum(v)/len(v) for v in guarantee_number_list.values()])
   ax2.set_xlabel('Number of Probabilistic Link per 2 Classes')
   ax2.set_ylabel('Number of labeled nodes')
+  ax2.grid(axis='x', color='gray', linestyle='--')
   ax2.grid(axis='y', color='gray', linestyle='--')
   fig2.savefig(f'./scalefree_graph/task3_figures/task3_link_mean_n{n}_b.png')
+
+  fig3 = plt.figure()
+  fig3.suptitle(f'The Number of Labeled Nodes to Guarantee Accuracy {threshold*100}% in n={n}\n(calculate median of {roop} samples)')
+  ax3 = fig3.add_subplot(111)
+  ax3.plot(guarantee_number_list.keys(), np.median([v for v in guarantee_number_list.values()], axis=1))
+  ax3.set_xlabel('Number of Probabilistic Link per 2 Classes')
+  ax3.set_ylabel('Number of labeled nodes')
+  ax3.grid(axis='x', color='gray', linestyle='--')
+  ax3.grid(axis='y', color='gray', linestyle='--')
+  fig3.savefig(f'./scalefree_graph/task3_figures/task3_link_med_n{n}_b.png')
 
 main()

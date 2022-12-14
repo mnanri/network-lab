@@ -30,11 +30,11 @@ class Net(torch.nn.Module):
     return x, y
 
 def main():
-  n = 50
+  n = 100
   m = 2
   graph_num = 4
 
-  roop = 80
+  roop = 40
   acc_mean = {}
   for i in range(n):
     acc_mean[i] = []
@@ -57,6 +57,10 @@ def main():
         for j in c[i]:
           samples.append(j)
 
+      # for i in range(cnt):
+      #   for j in c[n-1-i]:
+      #     samples.append(j)
+
       for _ in range(epoch_num):
         optimizer.zero_grad()
         _, out = model(dataA)
@@ -73,14 +77,15 @@ def main():
           err += 1
       acc_mean[cnt].append(1 - err/len(pred))
 
-    print(f'roop {r+1} done')
+    print(f'roop {r+1}/{roop} done')
 
   fig = plt.figure()
   fig.suptitle(f'Accuracy and Number of Labeled Nodes(n={n}) per Class\n(claculated mean of {roop} samples)')
   ax = fig.add_subplot(111)
   ax.plot([i for i in range(n)], [sum(acc_mean[i])/len(acc_mean[i]) for i in range(n)])
-  ax.set_xlabel('Number of Labeled Nodes')
+  ax.set_xlabel('Number of Labeled Nodes per Class')
   ax.set_ylabel('Accuracy')
+  ax.grid(axis='x', color='gray', linestyle='--')
   ax.grid(axis='y', color='gray', linestyle='--')
   fig.savefig(f'./scalefree_graph/task2_figures/task2_mean_n{n}.png')
 

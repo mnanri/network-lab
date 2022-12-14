@@ -33,14 +33,14 @@ def main():
   n = 100
   m = 2
   graph_num = 4
-  link_level = 12
+  link_level = 20
 
   roop = 40
   acc_list = {}
   for i in range(n):
     acc_list[i] = []
   for r in range(roop):
-    a,_,c = sample3.generate_flexible_linked_sample(n, m, graph_num, link_level)
+    a,c = sample3.generate_flexible_linked_sample_(n, m, graph_num, link_level)
     dataA = from_networkx(a)
 
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
@@ -80,9 +80,10 @@ def main():
   fig.suptitle(f'Accuracy and Number of Labeled Nodes(n={n} link={link_level}) per Class\n(calculate mean of {roop} samples)')
   ax = fig.add_subplot(111)
   ax.plot([i for i in range(n)], [sum(acc_list[i])/len(acc_list[i]) for i in range(n)])
-  ax.set_xlabel('Number of Labeled Nodes')
+  ax.set_xlabel('Number of Labeled Nodes per Class')
   ax.set_ylabel('Accuracy')
+  ax.grid(axis='x', color='gray', linestyle='dashed')
   ax.grid(axis='y', color='gray', linestyle='dashed')
-  fig.savefig(f'./scalefree_graph/task2_figures/task2_mean_n{n}_link{link_level}.png')
+  fig.savefig(f'./scalefree_graph/task2_figures/task2_mean_n{n}_link{link_level}_pr.png')
 
 main()
