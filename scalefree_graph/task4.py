@@ -59,7 +59,8 @@ def main():
       m = 2
       graph_num = 4
       large_graph_num = 2
-      a,_,lc,sc = sample2.generate_umblance_sample(n1, n2, m, graph_num, large_graph_num)
+      link_level = n2 // 5
+      a,_,lc,sc = sample2.generate_umblance_sample(n1, n2, m, graph_num, large_graph_num, link_level)
       dataA = from_networkx(a)
 
       device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
@@ -119,7 +120,7 @@ def main():
   ax.set_xlabel('Nodes of large network has x times of small network')
   ax.set_ylabel('Ratio of labeled nodes')
   ax.grid(axis='y', color='gray', linestyle='dashed')
-  fig.savefig(f'./scalefree_graph/task4_figures/task4_mean_ratio_n_sum{small_network_nodes_list[0]*4}.png')
+  fig.savefig(f'./scalefree_graph/task4_figures/task4_mean_ratio_n{small_network_nodes_list[0]*4}_20perLink.png')
 
   fig2 = plt.figure()
   fig2.suptitle(f'The number of labeled nodes to guarantee {threshold*100}% accuracy\n(sum of node is {small_network_nodes_list[0]*4}, calculate mean {roop} samples)')
@@ -128,7 +129,7 @@ def main():
   ax2.set_xlabel('Nodes of large network has x times of small network')
   ax2.set_ylabel('Number of labeled nodes')
   ax2.grid(axis='y', color='gray', linestyle='dashed')
-  fig2.savefig(f'./scalefree_graph/task4_figures/task4_mean_number_n_sum{small_network_nodes_list[0]*4}.png')
+  fig2.savefig(f'./scalefree_graph/task4_figures/task4_mean_number_n{small_network_nodes_list[0]*4}_20perLink.png')
 
   x = np.array([1,1.5,2,3,4,5,6,7,8,9,10])
   # x = np.array([1,1.5,2,3])
@@ -162,7 +163,7 @@ def main():
   ax3.set_xlabel('Nodes of large network has x times of small network')
   ax3.set_ylabel('Ratio of labeled nodes')
   ax3.grid(axis='y', color='gray', linestyle='dashed')
-  fig3.savefig(f'./scalefree_graph/task4_figures/task4_mean_ratio_n_sum{small_network_nodes_list[0]*4}_fit.png')
+  fig3.savefig(f'./scalefree_graph/task4_figures/task4_mean_ratio_n{small_network_nodes_list[0]*4}_fit.png')
 
   fig4 = plt.figure()
   fig4.suptitle(f'The number of labeled nodes to guarantee {threshold*100}% accuracy\n(sum of node is {small_network_nodes_list[0]*4}, calculate mean {roop} samples)')
@@ -175,6 +176,6 @@ def main():
   ax4.set_xlabel('Nodes of large network has x times of small network')
   ax4.set_ylabel('Number of labeled nodes')
   ax4.grid(axis='y', color='gray', linestyle='dashed')
-  fig4.savefig(f'./scalefree_graph/task4_figures/task4_mean_number_n_sum{small_network_nodes_list[0]*4}_fit.png')
+  fig4.savefig(f'./scalefree_graph/task4_figures/task4_mean_number_n{small_network_nodes_list[0]*4}_fit.png')
 
 main()

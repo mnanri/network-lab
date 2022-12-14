@@ -48,7 +48,7 @@ def main():
 
   for r in range(roop):
     for link_level in range(min_link_level, max_link_level+1, 2):
-      a,_,c = sample3.generate_flexible_linked_sample(n, m, graph_num, link_level)
+      a,c = sample3.generate_flexible_linked_sample(n, m, graph_num, link_level)
       dataA = from_networkx(a)
 
       device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')

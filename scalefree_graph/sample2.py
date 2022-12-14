@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import torch
 
-def generate_umblance_sample(n1=100, n2=25, m=2, graph_num=4, large_graph_num=2, link_level=4):
+def generate_umblance_sample(n1=100, n2=25, m=2, graph_num=4, large_graph_num=2, link_level=20):
   G = []
   small_graph_num = graph_num - large_graph_num
   for i in range(large_graph_num):
@@ -21,6 +21,24 @@ def generate_umblance_sample(n1=100, n2=25, m=2, graph_num=4, large_graph_num=2,
       for j in range(small_graph_num):
         tmp.append(sorted(dict(G[j+large_graph_num].degree()).items(), key=lambda x: x[1], reverse=True)[i][0] + j*n2 + large_graph_num*n1)
     deg_order_list.append(tmp)
+
+  deg_cent_dict = {}
+  for i in range(n1):
+    for j in range(large_graph_num):
+      deg_cent_dict[deg_order_list[i][j]] = nx.degree_centrality(G[j])[deg_order_list[i][j]-j*n1]
+  for i in range(n2):
+    for j in range(small_graph_num):
+      deg_cent_dict[deg_order_list[i][j+large_graph_num]] = nx.degree_centrality(G[j+large_graph_num])[deg_order_list[i][j+large_graph_num]-j*n2-large_graph_num*n1]
+  max_deg_cent_list = []
+  for i in range(graph_num):
+    max_deg_cent_list.append(deg_cent_dict[deg_order_list[0][i]])
+  for i in range(n1):
+    for j in range(large_graph_num):
+      deg_cent_dict[deg_order_list[i][j]] /= max_deg_cent_list[j]
+  for i in range(n2):
+    for j in range(large_graph_num, graph_num):
+      deg_cent_dict[deg_order_list[i][j]] /= max_deg_cent_list[j]
+  print(deg_cent_dict)
 
   # Labeling Order with Degree Centrality / Closeness Centrality
   large_graph_cent_order_list = []
@@ -58,15 +76,39 @@ def generate_umblance_sample(n1=100, n2=25, m=2, graph_num=4, large_graph_num=2,
   for i in range(graph_num-1):
     H = nx.compose(H, G[i+1])
 
-  if link_level > n2:
-    link_level = n2
-  for i in range(graph_num):
-    for j in range(i+1,graph_num):
+  for i in range(large_graph_num):
+    for j in range(i+1,large_graph_num):
       for k in range(link_level):
         for l in range(k, link_level):
           r = np.random.rand()
-          p1 = 1 - 1/nx.degree(H)[deg_order_list[k][i]]
-          p2 = 1 - 1/nx.degree(H)[deg_order_list[l][j]]
+          p1 = deg_cent_dict[deg_order_list[k][i]]
+          p2 = deg_cent_dict[deg_order_list[l][j]]
+          p = p1 * p2
+          if r < p:
+            H.add_edge(deg_order_list[k][i], deg_order_list[l][j])
+
+  for i in range(large_graph_num):
+    for j in range(large_graph_num, graph_num):
+      for k in range(link_level):
+        for l in range(k, link_level):
+          if l >= n2:
+            break
+          r = np.random.rand()
+          p1 = deg_cent_dict[deg_order_list[k][i]]
+          p2 = deg_cent_dict[deg_order_list[l//(n1//n2)][j]]
+          p = p1 * p2 / (n1//n2)
+          if r < p:
+            H.add_edge(deg_order_list[k][i], deg_order_list[l//(n1//n2)][j])
+
+  for i in range(large_graph_num, graph_num):
+    for j in range(i+1,graph_num):
+      for k in range(link_level//(n1//n2)):
+        for l in range(k, link_level//(n1//n2)):
+          if l >= n2:
+            break
+          r = np.random.rand()
+          p1 = deg_cent_dict[deg_order_list[k][i]]
+          p2 = deg_cent_dict[deg_order_list[l][j]]
           p = p1 * p2
           if r < p:
             H.add_edge(deg_order_list[k][i], deg_order_list[l][j])
@@ -107,6 +149,7 @@ def generate_umblance_sample(n1=100, n2=25, m=2, graph_num=4, large_graph_num=2,
   pattern = [ 'blue' if node < n1 else 'green' if node < 2*n1 else 'orange' if node < n2+2*n1 else 'red' for node in H.nodes() ]
   nx.draw(H, pos, node_size=20, alpha=0.5, node_color=pattern, edge_color='gray', with_labels=False)
   plt.show()
+
 
   return H, I, large_graph_cent_order_list, small_graph_cent_order_list
 

@@ -47,7 +47,7 @@ def main():
       m = 2
       graph_num = 4
       link_level = n//5
-      a,_,c = sample3.generate_flexible_linked_sample(n, m , graph_num, link_level)
+      a,c = sample3.generate_flexible_linked_sample(n, m , graph_num, link_level)
       dataA = from_networkx(a)
 
       device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')

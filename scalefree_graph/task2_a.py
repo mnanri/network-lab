@@ -53,13 +53,13 @@ def main():
       t = dataA.label
 
       samples = []
-      for i in range(cnt):
-        for j in c[i]:
-          samples.append(j)
-
       # for i in range(cnt):
-      #   for j in c[n-1-i]:
+      #   for j in c[i]:
       #     samples.append(j)
+
+      for i in range(cnt):
+        for j in c[n-1-i]:
+          samples.append(j)
 
       for _ in range(epoch_num):
         optimizer.zero_grad()
@@ -87,6 +87,6 @@ def main():
   ax.set_ylabel('Accuracy')
   ax.grid(axis='x', color='gray', linestyle='--')
   ax.grid(axis='y', color='gray', linestyle='--')
-  fig.savefig(f'./scalefree_graph/task2_figures/task2_mean_n{n}.png')
+  fig.savefig(f'./scalefree_graph/task2_figures/task2_mean_n{n}_pr_order_reverse.png')
 
 main()
