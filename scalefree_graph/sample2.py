@@ -38,7 +38,7 @@ def generate_umblance_sample(n1=100, n2=25, m=2, graph_num=4, large_graph_num=2,
   for i in range(n2):
     for j in range(large_graph_num, graph_num):
       deg_cent_dict[deg_order_list[i][j]] /= max_deg_cent_list[j]
-  print(deg_cent_dict)
+  # print(deg_cent_dict)
 
   # Labeling Order with Degree Centrality / Closeness Centrality
   large_graph_cent_order_list = []
@@ -144,13 +144,13 @@ def generate_umblance_sample(n1=100, n2=25, m=2, graph_num=4, large_graph_num=2,
   nx.draw(I, pos, node_size=20, alpha=0.5, node_color=pattern, edge_color='gray', with_labels=False)
   plt.show()
   '''
-
+  '''
   pos = nx.circular_layout(H)
   pattern = [ 'blue' if node < n1 else 'green' if node < 2*n1 else 'orange' if node < n2+2*n1 else 'red' for node in H.nodes() ]
   nx.draw(H, pos, node_size=20, alpha=0.5, node_color=pattern, edge_color='gray', with_labels=False)
   plt.show()
-
+  '''
 
   return H, I, large_graph_cent_order_list, small_graph_cent_order_list
 
-generate_umblance_sample()
+# generate_umblance_sample()

@@ -59,8 +59,7 @@ def main():
       m = 2
       graph_num = 4
       large_graph_num = 2
-      link_level = n2 // 5
-      a,_,lc,sc = sample2.generate_umblance_sample(n1, n2, m, graph_num, large_graph_num, link_level)
+      a,_,lc,sc = sample2.generate_umblance_sample(n1, n2, m, graph_num, large_graph_num, n1//5)
       dataA = from_networkx(a)
 
       device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')

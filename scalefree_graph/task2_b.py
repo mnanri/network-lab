@@ -42,7 +42,7 @@ def main():
   duration = []
   for r in range(roop):
     start = time.time()
-    a,_,c = sample.generate_sample(n, m, graph_num, link_level)
+    a,_,c = sample.generate_sample_cc(n, m, graph_num, link_level)
     dataA = from_networkx(a)
 
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
@@ -92,8 +92,8 @@ def main():
   ax.set_ylabel('Accuracy')
   ax.grid(axis='x', color='gray', linestyle='--')
   ax.grid(axis='y', color='gray', linestyle='--')
-  fig.savefig(f'./scalefree_graph/task2_figures/task2_mean_n{n}_10perLink_dg.png')
+  fig.savefig(f'./scalefree_graph/task2_figures/task2_mean_n{n}_10perLink_cc.png')
 
-  print(f'Average time: {sum(duration)/len(duration)}')
+  print(f'Average Duration: {sum(duration)/len(duration)}')
 
 main()
