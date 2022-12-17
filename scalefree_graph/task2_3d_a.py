@@ -30,16 +30,16 @@ class Net(torch.nn.Module):
     return x, y
 
 def main():
-  n = 100
+  n = 200
   m = 2
   graph_num = 8
-
-  roop = 40
+  link_level = n // 10
+  roop = 20
   acc_list = {}
   for i in range(n):
     acc_list[i] = []
   for r in range(roop):
-    a,_,c = sample.generate_sample(n, m, graph_num)
+    a,_,c = sample.generate_sample(n, m, graph_num, link_level)
     dataA = from_networkx(a)
 
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
@@ -74,12 +74,13 @@ def main():
     print(f"roop: {r+1}/{roop} finished")
 
   fig = plt.figure()
-  fig.suptitle(f'Accuracy and Number of Labeled Nodes(n={n}, c={graph_num})\n(calculate mean of {roop} samples)')
+  fig.suptitle(f'Accuracy and Number of Labeled Nodes(n={n}, c={graph_num})\n({link_level/n*100}% nodes is used in Link, calculate mean of {roop} samples)')
   ax = fig.add_subplot(111)
   ax.plot(list(acc_list.keys()), [sum(acc_list[i])/len(acc_list[i]) for i in acc_list.keys()])
   ax.set_xlabel('Number of Labeled Nodes')
   ax.set_ylabel('Accuracy')
+  ax.grid(axis='x', color='gray', linestyle='dashed')
   ax.grid(axis='y', color='gray', linestyle='dashed')
-  fig.savefig(f'./scalefree_graph/task2_figures/task2_3d_mean_n{n}.png')
+  fig.savefig(f'./scalefree_graph/task2_figures/task2_3d_mean_n{n}_10perLink.png')
 
 main()

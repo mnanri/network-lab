@@ -31,23 +31,23 @@ class Net(torch.nn.Module):
     return x, y
 
 def main():
-  n = 100
+  n = 400
   m = 2
   graph_num = 4
-  max_link_level = 97
-  min_link_level = 3
-  roop = 40
+  max_link_level = n
+  min_link_level = 0
+  roop = 10
 
   guarantee_ratio_list = {}
   guarantee_number_list = {}
-  for i in range(min_link_level, max_link_level+1, 2):
+  for i in range(min_link_level, max_link_level+1, n // 20):
     guarantee_ratio_list[i] = []
     guarantee_number_list[i] = []
 
   threshold = 0.8
 
   for r in range(roop):
-    for link_level in range(min_link_level, max_link_level+1, 2):
+    for link_level in range(min_link_level, max_link_level+1, n // 20):
       a,c = sample3.generate_flexible_linked_sample(n, m, graph_num, link_level)
       dataA = from_networkx(a)
 

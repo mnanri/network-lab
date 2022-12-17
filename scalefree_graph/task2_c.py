@@ -31,11 +31,11 @@ class Net(torch.nn.Module):
     return x, y
 
 def main():
-  n = 1000
+  n = 2500
   m = 2
   graph_num = 4
   link_level = n // 10
-  roop = 10
+  roop = 4
   acc_mean = {}
   for i in range(n):
     acc_mean[i] = []
@@ -81,11 +81,23 @@ def main():
       acc_mean[cnt].append(1 - err/len(pred))
 
     end = time.time()
+    print(f'Duration: {end-start} sec')
     duration.append(end - start)
+
+    fig = plt.figure()
+    fig.suptitle(f'Accuracy and Number of Labeled Nodes(n={n}) per Class\n({link_level/n*100}% nodes is used in links, claculated mean of {r} samples)')
+    ax = fig.add_subplot(111)
+    ax.plot([i for i in range(n)], [sum(acc_mean[i])/len(acc_mean[i]) for i in range(n)])
+    ax.set_xlabel('Number of Labeled Nodes per Class')
+    ax.set_ylabel('Accuracy')
+    ax.grid(axis='x', color='gray', linestyle='--')
+    ax.grid(axis='y', color='gray', linestyle='--')
+    fig.savefig(f'./scalefree_graph/task2_figures/task2_mean_n{n}_10perLink_pr_r{r}.png')
+
     print(f'roop {r+1}/{roop} done')
 
   fig = plt.figure()
-  fig.suptitle(f'Accuracy and Number of Labeled Nodes(n={n}) per Class\n({link_level/n*100}% nodes is used in Link, claculated mean of {roop} samples)')
+  fig.suptitle(f'Accuracy and Number of Labeled Nodes(n={n}) per Class\n({link_level/n*100}% nodes is used in links, claculated mean of {roop} samples)')
   ax = fig.add_subplot(111)
   ax.plot([i for i in range(n)], [sum(acc_mean[i])/len(acc_mean[i]) for i in range(n)])
   ax.set_xlabel('Number of Labeled Nodes per Class')
@@ -94,6 +106,6 @@ def main():
   ax.grid(axis='y', color='gray', linestyle='--')
   fig.savefig(f'./scalefree_graph/task2_figures/task2_mean_n{n}_10perLink_pr.png')
 
-  print(f'Average time: {sum(duration)/len(duration)}')
+  print(f'Average Duration: {sum(duration)/len(duration)}')
 
 main()

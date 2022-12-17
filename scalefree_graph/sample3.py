@@ -23,8 +23,8 @@ def generate_flexible_linked_sample(n=100, m=2, graph_num=4, link_level=10):
   for i in range(n):
     tmp = []
     for j in range(graph_num):
-      # tmp.append(sorted(dict(G[j].degree()).items(), key=lambda x: x[1])[i][0] + j*n)
-      tmp.append(sorted(dict(nx.closeness_centrality(G[j])).items(), key=lambda x: x[1])[i][0] + j*n)
+      tmp.append(sorted(dict(G[j].degree()).items(), key=lambda x: x[1])[i][0] + j*n)
+      # tmp.append(sorted(dict(nx.closeness_centrality(G[j])).items(), key=lambda x: x[1])[i][0] + j*n)
       # tmp.append(sorted(dict(nx.pagerank(G[j])).items(), key=lambda x: x[1], reverse=True)[i][0] + j*n)
     cent_order_list.append(tmp)
 
@@ -64,12 +64,12 @@ def generate_flexible_linked_sample(n=100, m=2, graph_num=4, link_level=10):
 
   print("link num: ", len(H.edges()))
   print("link num between class: ", cnt)
-
+  '''
   pos = nx.circular_layout(H)
   pattern = [ 'blue' if node < n else 'green' if node < 2*n else 'orange' if node < 3*n else 'red' for node in H.nodes() ]
   nx.draw(H, pos, node_size=20, alpha=0.5, node_color=pattern, edge_color='gray', with_labels=False)
   plt.show()
-
+  '''
   return H, cent_order_list
 
 def generate_flexible_linked_sample_(n=100, m=2, graph_num=4, link_level=10):
@@ -133,12 +133,12 @@ def generate_flexible_linked_sample_(n=100, m=2, graph_num=4, link_level=10):
 
   print("link num: ", len(H.edges()))
   print("link num between class: ", cnt)
-
+  '''
   pos = nx.circular_layout(H)
   pattern = [ 'blue' if node < n else 'green' if node < 2*n else 'orange' if node < 3*n else 'red' for node in H.nodes() ]
   nx.draw(H, pos, node_size=20, alpha=0.5, node_color=pattern, edge_color='gray', with_labels=False)
   plt.show()
-
+  '''
   return H, cent_order_list
 
-generate_flexible_linked_sample(100,2,4,20)
+# generate_flexible_linked_sample(100,2,4,20)

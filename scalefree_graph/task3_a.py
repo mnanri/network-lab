@@ -30,23 +30,24 @@ class Net(torch.nn.Module):
     return x, y
 
 def main():
-  max_nodes_per_class = 250
-  min_nodes_per_class = 40
-  roop = 20
+  max_nodes_per_class = 450
+  min_nodes_per_class = 50
+  roop = 10
 
   guarantee_ratio_list = {}
   guarantee_number_list = {}
-  for i in range(min_nodes_per_class, max_nodes_per_class+1, 5):
+  for i in range(min_nodes_per_class, max_nodes_per_class+1, 10):
     guarantee_ratio_list[i] = []
     guarantee_number_list[i] = []
 
   threshold = 0.8
 
   for r in range(roop):
-    for n in range(min_nodes_per_class, max_nodes_per_class+1, 5):
+    for n in range(min_nodes_per_class, max_nodes_per_class+1, 10):
       m = 2
       graph_num = 4
-      a,_,c = sample.generate_sample(n, m, graph_num)
+      link_level = n // 10
+      a,_,c = sample.generate_sample(n, m, graph_num, link_level)
       dataA = from_networkx(a)
 
       device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
@@ -91,21 +92,21 @@ def main():
     print(f"roop {r+1}/{roop} finished")
 
   fig = plt.figure()
-  fig.suptitle(f'The Ratio of Labeled Nodes to Guarantee Accuracy {threshold*100}%\n(calculate mean of {roop} samples)')
+  fig.suptitle(f'The Ratio of Labeled Nodes to Guarantee Accuracy {threshold*100}%\n(10% nodes is used in links, calculate mean of {roop} samples)')
   ax = fig.add_subplot(111)
   ax.plot(guarantee_ratio_list.keys(), [sum(v)/len(v) for v in guarantee_ratio_list.values()])
   ax.set_xlabel('Number of Nodes per Class')
   ax.set_ylabel('Ratio of Labeled Nodes')
   ax.grid(axis='y', color='gray', linestyle='--')
-  fig.savefig('./scalefree_graph/task3_figures/task3_mean_a.png')
+  fig.savefig('./scalefree_graph/task3_figures/task3_mean_10perLink_a.png')
 
   fig2 = plt.figure()
-  fig2.suptitle(f'The Number of Labeled Nodes to Guarantee Accuracy {threshold*100}%\n(calculate mean of {roop} samples)')
+  fig2.suptitle(f'The Number of Labeled Nodes to Guarantee Accuracy {threshold*100}%\n(10% nodes is used in links, calculate mean of {roop} samples)')
   ax2 = fig2.add_subplot(111)
   ax2.plot(guarantee_number_list.keys(), [sum(v)/len(v) for v in guarantee_number_list.values()])
   ax2.set_xlabel('Number of nodes per class')
   ax2.set_ylabel('Number of labeled nodes')
   ax2.grid(axis='y', color='gray', linestyle='--')
-  fig2.savefig('./scalefree_graph/task3_figures/task3_mean_b.png')
+  fig2.savefig('./scalefree_graph/task3_figures/task3_mean_10perLink_b.png')
 
 main()
