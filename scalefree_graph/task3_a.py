@@ -46,7 +46,7 @@ def main():
     for n in range(min_nodes_per_class, max_nodes_per_class+1, 10):
       m = 2
       graph_num = 4
-      link_level = n // 10
+      link_level = n // 5
       a,_,c = sample.generate_sample(n, m, graph_num, link_level)
       dataA = from_networkx(a)
 
@@ -92,7 +92,7 @@ def main():
     print(f"roop {r+1}/{roop} finished")
 
   fig = plt.figure()
-  fig.suptitle(f'The Ratio of Labeled Nodes to Guarantee Accuracy {threshold*100}%\n(10% nodes is used in links, calculate mean of {roop} samples)')
+  fig.suptitle(f'The Ratio of Labeled Nodes to Guarantee Accuracy {threshold*100}%\n(20% nodes is used in links, calculate mean of {roop} samples)')
   ax = fig.add_subplot(111)
   ax.plot(guarantee_ratio_list.keys(), [sum(v)/len(v) for v in guarantee_ratio_list.values()])
   ax.set_xlabel('Number of Nodes per Class')
@@ -101,7 +101,7 @@ def main():
   fig.savefig('./scalefree_graph/task3_figures/task3_mean_10perLink_a.png')
 
   fig2 = plt.figure()
-  fig2.suptitle(f'The Number of Labeled Nodes to Guarantee Accuracy {threshold*100}%\n(10% nodes is used in links, calculate mean of {roop} samples)')
+  fig2.suptitle(f'The Number of Labeled Nodes to Guarantee Accuracy {threshold*100}%\n(20% nodes is used in links, calculate mean of {roop} samples)')
   ax2 = fig2.add_subplot(111)
   ax2.plot(guarantee_number_list.keys(), [sum(v)/len(v) for v in guarantee_number_list.values()])
   ax2.set_xlabel('Number of nodes per class')

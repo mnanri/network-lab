@@ -3,10 +3,16 @@ memo
 ## Accuracy and Number of Labeled Nodes
 Under constant number of whole nodes, figures show the relation between number of labeled nodes and accuracy.
 ```
+whole nodes: 2500x4
+ratio of nodes used in links: top 10% in order of degree centrality
+rule of labeling: degree centrality
+duration of a sample: 62526 sec
+```
+```
 whole nodes: 1000x4
 ratio of nodes used in links: top 10% in order of degree centrality
 rule of labeling: degree centrality
-duration a sample (average of 10 times): 6302 sec
+duration for a sample (average of 10 times): 6302 sec
 ```
 ```
 whole nodes: 400x4
@@ -20,6 +26,7 @@ ratio of nodes used in links: top 10% in order of degree centrality
 rule of labeling: degree centrality order reversed (asc)
 duration for a sample (average of 10 times): 1110 sec
 ```
+
 ```
 whole nodes: 1000x4
 ratio of nodes used in links: top 10% in order of degree centrality
@@ -37,6 +44,13 @@ whole nodes: 400x4
 ratio of nodes used in links: top 10% in order of degree centrality
 rule of labeling: closeness centrality order reversed (asc)
 duration for a sample (average of 10 times): 1305 sec
+```
+
+```
+whole nodes: 2500x4
+ratio of nodes used in links: top 10% in order of degree centrality
+rule of labeling: ragerank
+duration of a sample: 62381 sec
 ```
 ```
 whole nodes: 1000x4
