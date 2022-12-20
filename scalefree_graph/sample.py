@@ -26,7 +26,7 @@ def generate_sample(n=100, m=2, graph_num=4, link_level=4):
   for i in range(n):
     for j in range(graph_num):
       deg_cent_dict[deg_order_list[i][j]] /= max_deg_cent_list[j]
-  # print(deg_cent_dict)
+  print(deg_cent_dict)
 
   # Labeling Order with Degree Centrality / Closeness Centrality / PageRank
   cent_order_list = []

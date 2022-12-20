@@ -6,7 +6,7 @@ Under constant number of whole nodes, figures show the relation between number o
 whole nodes: 2500x4
 ratio of nodes used in links: top 10% in order of degree centrality
 rule of labeling: degree centrality
-duration of a sample: 62526 sec
+duration of a sample: 57622 sec
 ```
 ```
 whole nodes: 1000x4
@@ -31,7 +31,7 @@ duration for a sample (average of 10 times): 1110 sec
 whole nodes: 1000x4
 ratio of nodes used in links: top 10% in order of degree centrality
 rule of labeling: closeness centrality
-duration for a sample (average of 10 times): 6355 sec
+duration for a sample (average of 10 times): 9186 sec
 ```
 ```
 whole nodes: 400x4
@@ -50,13 +50,13 @@ duration for a sample (average of 10 times): 1305 sec
 whole nodes: 2500x4
 ratio of nodes used in links: top 10% in order of degree centrality
 rule of labeling: ragerank
-duration of a sample: 62381 sec
+duration of a sample: 56585 sec
 ```
 ```
 whole nodes: 1000x4
 ratio of nodes used in links: top 10% in order of degree centrality
 rule of labeling: pagerank
-duration for a sample (average of 10 times): 9186 sec
+duration for a sample (average of 10 times): 6355 sec
 ```
 ```
 whole nodes: 400x4
