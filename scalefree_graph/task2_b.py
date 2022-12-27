@@ -1,3 +1,4 @@
+import random
 import time
 from torch_geometric.nn import GCNConv
 from torch_geometric.utils.convert import from_networkx
@@ -35,14 +36,14 @@ def main():
   m = 2
   graph_num = 4
   link_level = n // 10
-  roop = 10
+  roop = 40
   acc_mean = {}
   for i in range(n):
     acc_mean[i] = []
   duration = []
   for r in range(roop):
     start = time.time()
-    a,_,c = sample.generate_sample_cc(n, m, graph_num, link_level)
+    a,_,c = sample.generate_sample(n, m, graph_num, link_level)
     dataA = from_networkx(a)
 
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
@@ -60,8 +61,14 @@ def main():
       #   for j in c[i]:
       #     samples.append(j)
 
+      # for i in range(cnt):
+      #   for j in c[n-1-i]:
+      #     samples.append(j)
+
+      tmp = [i for i in range(n)]
+      random.shuffle(tmp)
       for i in range(cnt):
-        for j in c[n-1-i]:
+        for j in c[tmp[i]]:
           samples.append(j)
 
       for _ in range(epoch_num):
@@ -92,7 +99,7 @@ def main():
   ax.set_ylabel('Accuracy')
   ax.grid(axis='x', color='gray', linestyle='--')
   ax.grid(axis='y', color='gray', linestyle='--')
-  fig.savefig(f'./scalefree_graph/task2_figures/task2_mean_n{n}_10perLink_cc_order_reverse.png')
+  fig.savefig(f'./scalefree_graph/task2_figures/task2_mean_n{n}_10perLink_dg_rand.png')
 
   print(f'Average Duration: {sum(duration)/len(duration)}')
 
