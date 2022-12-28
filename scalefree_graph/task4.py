@@ -31,7 +31,7 @@ class Net(torch.nn.Module):
     return x, y
 
 def main():
-  small_network_nodes_list = [100, 80, 66, 50, 40, 33, 28, 25, 22, 20, 18]
+  small_network_nodes_list = [400, 320, 264, 200, 160, 132, 112, 100, 88, 80, 72]
   # small_network_nodes_list = [100, 80, 66, 50]
   roop = 40
 
@@ -59,7 +59,7 @@ def main():
       m = 2
       graph_num = 4
       large_graph_num = 2
-      a,_,lc,sc = sample2.generate_umblance_sample(n1, n2, m, graph_num, large_graph_num, n1//5)
+      a,_,lc,sc = sample2.generate_umblance_sample(n1, n2, m, graph_num, large_graph_num, n1//10)
       dataA = from_networkx(a)
 
       device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
@@ -135,6 +135,7 @@ def main():
   y = np.array([sum(v)/len(v) for v in guarantee_ratio_list.values()])
   z = np.array([sum(v)/len(v) for v in guarantee_number_list.values()])
 
+  '''
   res1 = np.polyfit(x, y, 1)
   res2 = np.polyfit(x, y, 2)
   res3 = np.polyfit(x, y, 3)
@@ -176,5 +177,6 @@ def main():
   ax4.set_ylabel('Number of labeled nodes')
   ax4.grid(axis='y', color='gray', linestyle='dashed')
   fig4.savefig(f'./scalefree_graph/task4_figures/task4_mean_number_n{small_network_nodes_list[0]*4}_fit.png')
+  '''
 
 main()

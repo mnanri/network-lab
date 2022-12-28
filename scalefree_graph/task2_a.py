@@ -1,3 +1,4 @@
+import csv
 import time
 from torch_geometric.nn import GCNConv
 from torch_geometric.utils.convert import from_networkx
@@ -56,13 +57,17 @@ def main():
       t = dataA.label
 
       samples = []
-      for i in range(cnt):
-        for j in c[(i+link_level)%n]:
-          samples.append(j)
+      # for i in range(cnt):
+      #   for j in c[i]:
+      #     samples.append(j)
 
       # for i in range(cnt):
-      #   for j in c[n-1-i]:
+      #   for j in c[(i+link_level)%n]:
       #     samples.append(j)
+
+      for i in range(cnt):
+        for j in c[n-1-i]:
+          samples.append(j)
 
       for _ in range(epoch_num):
         optimizer.zero_grad()
@@ -86,14 +91,14 @@ def main():
 
     '''
     fig = plt.figure()
-    fig.suptitle(f'Accuracy and Number of Labeled Nodes(n={n}) per Class\n({link_level/n*100}% nodes is used in links, claculated mean of {r} samples)')
+    fig.suptitle(f'Accuracy and Number of Labeled Nodes(n={n}) per Class\n({link_level/n*100}% nodes is used in links, claculated mean of {r+1} samples)')
     ax = fig.add_subplot(111)
     ax.plot([i for i in range(n)], [sum(acc_mean[i])/len(acc_mean[i]) for i in range(n)])
     ax.set_xlabel('Number of Labeled Nodes per Class')
     ax.set_ylabel('Accuracy')
     ax.grid(axis='x', color='gray', linestyle='--')
     ax.grid(axis='y', color='gray', linestyle='--')
-    fig.savefig(f'./scalefree_graph/task2_figures/task2_mean_n{n}_10perLink_dg_r{r}.png')
+    fig.savefig(f'./scalefree_graph/task2_figures/task2_mean_n{n}_10perLink_dg_r{r+1}.png')
     '''
     print(f'roop {r+1}/{roop} done')
 
@@ -105,7 +110,12 @@ def main():
   ax.set_ylabel('Accuracy')
   ax.grid(axis='x', color='gray', linestyle='--')
   ax.grid(axis='y', color='gray', linestyle='--')
-  fig.savefig(f'./scalefree_graph/task2_figures/task2_mean_n{n}_10perLink_dg_opt.png')
+  fig.savefig(f'./scalefree_graph/task2_figures/task2_mean_n{n}_10perLink_dg_reverse.png')
+
+  with open(f'./scalefree_graph/task2_data/task2_n{n}_10perLink_{roop}samples_dg_reverse.csv', 'w') as f:
+    writer = csv.writer(f)
+    writer.writerow([i for i in range(n)])
+    writer.writerow([sum(acc_mean[i])/len(acc_mean[i]) for i in range(n)])
 
   print(f'Average Duration: {sum(duration)/len(duration)}')
 

@@ -1,3 +1,5 @@
+import csv
+import numpy as np
 from torch_geometric.nn import GCNConv
 from torch_geometric.utils.convert import from_networkx
 import torch.nn.functional as F
@@ -32,7 +34,7 @@ class Net(torch.nn.Module):
 def main():
   max_nodes_per_class = 450
   min_nodes_per_class = 50
-  roop = 10
+  roop = 20
 
   guarantee_ratio_list = {}
   guarantee_number_list = {}
@@ -46,7 +48,7 @@ def main():
     for n in range(min_nodes_per_class, max_nodes_per_class+1, 10):
       m = 2
       graph_num = 4
-      link_level = n // 5
+      link_level = n // 10
       a,_,c = sample.generate_sample(n, m, graph_num, link_level)
       dataA = from_networkx(a)
 
@@ -108,5 +110,25 @@ def main():
   ax2.set_ylabel('Number of labeled nodes')
   ax2.grid(axis='y', color='gray', linestyle='--')
   fig2.savefig('./scalefree_graph/task3_figures/task3_mean_10perLink_b.png')
+
+  with open(f'./scalefree_graph/task3_data/task3_mean_10perLink_a.csv', 'w') as f:
+    writer = csv.writer(f)
+    writer.writerow(guarantee_ratio_list.keys())
+    writer.writerow([sum(v)/len(v) for v in guarantee_ratio_list.values()])
+
+  with open(f'./scalefree_graph/task3_data/task3_med_10perLink_a.csv', 'w') as f:
+    writer = csv.writer(f)
+    writer.writerow(guarantee_ratio_list.keys())
+    writer.writerow(np.median([v for v in guarantee_ratio_list.values()], axis=1))
+
+  with open(f'./scalefree_graph/task3_data/task3_mean_10perLink_b.csv', 'w') as f:
+    writer = csv.writer(f)
+    writer.writerow(guarantee_number_list.keys())
+    writer.writerow([sum(v)/len(v) for v in guarantee_number_list.values()])
+
+  with open(f'./scalefree_graph/task3_data/task3_med_10perLink_b.csv', 'w') as f:
+    writer = csv.writer(f)
+    writer.writerow(guarantee_number_list.keys())
+    writer.writerow(np.median([v for v in guarantee_number_list.values()], axis=1))
 
 main()

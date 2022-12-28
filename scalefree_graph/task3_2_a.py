@@ -1,3 +1,4 @@
+import csv
 from torch_geometric.nn import GCNConv
 from torch_geometric.utils.convert import from_networkx
 import torch.nn.functional as F
@@ -37,18 +38,20 @@ def main():
   graph_num = 4
   max_link_level = n
   min_link_level = 0
-  roop = 10
+  roop = 20
 
+  x_axis = {}
   guarantee_ratio_list = {}
   guarantee_number_list = {}
-  for i in range(min_link_level, max_link_level+1, n // 20):
+  for i in range(min_link_level, max_link_level+1, n // 40):
+    x_axis[i] = -1
     guarantee_ratio_list[i] = []
     guarantee_number_list[i] = []
 
   threshold = 0.8
 
   for r in range(roop):
-    for link_level in range(min_link_level, max_link_level+1, n // 20):
+    for link_level in range(min_link_level, max_link_level+1, n // 40):
       # a,c = sample3.generate_flexible_linked_sample(n, m, graph_num, link_level)
       a,_,c = sample.generate_sample(n, m, graph_num, link_level)
       dataA = from_networkx(a)
@@ -92,46 +95,72 @@ def main():
           guarantee_number_list[link_level].append(n*graph_num)
           print(f"unexpected: cannot guarantee accuracy for {n}x{graph_num} nodes")
 
+      x_axis[link_level] = round(link_level/n, 2)
+
     print(f"=============== roop {r+1}/{roop} is finished ===============")
 
   fig = plt.figure()
   fig.suptitle(f'The Ratio of Labeled Nodes to Guarantee Accuracy {threshold*100}% in n={n}\n(calculate mean of {roop} samples)')
   ax = fig.add_subplot(111)
-  ax.plot(guarantee_ratio_list.keys(), [sum(v)/len(v) for v in guarantee_ratio_list.values()])
+  ax.plot(x_axis.values(), [sum(v)/len(v) for v in guarantee_ratio_list.values()])
   ax.set_xlabel('Number of Node used in Probabilistic Link per 2 Classes')
   ax.set_ylabel('Ratio of Labeled Nodes')
   ax.grid(axis='x', color='gray', linestyle='--')
   ax.grid(axis='y', color='gray', linestyle='--')
   fig.savefig(f'./scalefree_graph/task3_figures/task3_link_mean_n{n}_a.png')
 
+  '''
   fig1 = plt.figure()
   fig1.suptitle(f'The Ratio of Labeled Nodes to Guarantee Accuracy {threshold*100}% in n={n}\n(calculate median of {roop} samples)')
   ax1 = fig1.add_subplot(111)
-  ax1.plot(guarantee_ratio_list.keys(), np.median([v for v in guarantee_ratio_list.values()], axis=1))
+  ax1.plot(x_axis.values(), np.median([v for v in guarantee_ratio_list.values()], axis=1))
   ax1.set_xlabel('Number of Node used in Probabilistic Link per 2 Classes')
   ax1.set_ylabel('Ratio of Labeled Nodes')
   ax1.grid(axis='x', color='gray', linestyle='--')
   ax1.grid(axis='y', color='gray', linestyle='--')
   fig1.savefig(f'./scalefree_graph/task3_figures/task3_link_med_n{n}_a.png')
+  '''
 
   fig2 = plt.figure()
   fig2.suptitle(f'The Number of Labeled Nodes to Guarantee Accuracy {threshold*100}% in n={n}\n(calculate mean of {roop} samples)')
   ax2 = fig2.add_subplot(111)
-  ax2.plot(guarantee_number_list.keys(), [sum(v)/len(v) for v in guarantee_number_list.values()])
+  ax2.plot(x_axis.values(), [sum(v)/len(v) for v in guarantee_number_list.values()])
   ax2.set_xlabel('Number of Node used in Probabilistic Link per 2 Classes')
   ax2.set_ylabel('Number of labeled nodes')
   ax2.grid(axis='x', color='gray', linestyle='--')
   ax2.grid(axis='y', color='gray', linestyle='--')
   fig2.savefig(f'./scalefree_graph/task3_figures/task3_link_mean_n{n}_b.png')
 
+  '''
   fig3 = plt.figure()
   fig3.suptitle(f'The Number of Labeled Nodes to Guarantee Accuracy {threshold*100}% in n={n}\n(calculate median of {roop} samples)')
   ax3 = fig3.add_subplot(111)
-  ax3.plot(guarantee_number_list.keys(), np.median([v for v in guarantee_number_list.values()], axis=1))
+  ax3.plot(x_axis.values(), np.median([v for v in guarantee_number_list.values()], axis=1))
   ax3.set_xlabel('Number of Node used in Probabilistic Link per 2 Classes')
   ax3.set_ylabel('Number of labeled nodes')
   ax3.grid(axis='x', color='gray', linestyle='--')
   ax3.grid(axis='y', color='gray', linestyle='--')
   fig3.savefig(f'./scalefree_graph/task3_figures/task3_link_med_n{n}_b.png')
+  '''
+
+  with open(f'./scalefree_graph/task3_data/task3_link_mean_n{n}_a.csv', 'w') as f:
+    writer = csv.writer(f)
+    writer.writerow(x_axis.values())
+    writer.writerow([sum(v)/len(v) for v in guarantee_ratio_list.values()])
+
+  with open(f'./scalefree_graph/task3_data/task3_link_med_n{n}_a.csv', 'w') as f:
+    writer = csv.writer(f)
+    writer.writerow(x_axis.values())
+    writer.writerow(np.median([v for v in guarantee_ratio_list.values()], axis=1))
+
+  with open(f'./scalefree_graph/task3_data/task3_link_mean_n{n}_b.csv', 'w') as f:
+    writer = csv.writer(f)
+    writer.writerow(x_axis.values())
+    writer.writerow([sum(v)/len(v) for v in guarantee_number_list.values()])
+
+  with open(f'./scalefree_graph/task3_data/task3_link_med_n{n}_b.csv', 'w') as f:
+    writer = csv.writer(f)
+    writer.writerow(x_axis.values())
+    writer.writerow(np.median([v for v in guarantee_number_list.values()], axis=1))
 
 main()

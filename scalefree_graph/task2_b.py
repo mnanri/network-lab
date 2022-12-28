@@ -1,3 +1,4 @@
+import csv
 import random
 import time
 from torch_geometric.nn import GCNConv
@@ -89,10 +90,11 @@ def main():
 
     end = time.time()
     duration.append(end - start)
+    print(f'Duration: {end - start} sec')
     print(f'roop {r+1}/{roop} done')
 
   fig = plt.figure()
-  fig.suptitle(f'Accuracy and Number of Labeled Nodes(n={n}) per Class\n({link_level/n*100}% nodes is used in Link, claculated mean of {roop} samples)')
+  fig.suptitle(f'Accuracy and Number of Labeled Nodes(n={n}) per Class\n({link_level/n*100}% nodes is used in link, claculated mean of {roop} samples)')
   ax = fig.add_subplot(111)
   ax.plot([i for i in range(n)], [sum(acc_mean[i])/len(acc_mean[i]) for i in range(n)])
   ax.set_xlabel('Number of Labeled Nodes per Class')
@@ -100,6 +102,11 @@ def main():
   ax.grid(axis='x', color='gray', linestyle='--')
   ax.grid(axis='y', color='gray', linestyle='--')
   fig.savefig(f'./scalefree_graph/task2_figures/task2_mean_n{n}_10perLink_dg_rand.png')
+
+  with open(f'./scalefree_graph/task2_data/task2_n{n}_10perLink_{roop}samples_dg_rand.csv', 'w') as f:
+    writer = csv.writer(f)
+    writer.writerow([i for i in range(n)])
+    writer.writerow([sum(acc_mean[i])/len(acc_mean[i]) for i in range(n)])
 
   print(f'Average Duration: {sum(duration)/len(duration)}')
 
