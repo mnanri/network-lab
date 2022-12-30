@@ -38,7 +38,7 @@ def main():
   graph_num = 4
   max_link_level = n
   min_link_level = 0
-  roop = 20
+  roop = 10
 
   x_axis = {}
   guarantee_ratio_list = {}
@@ -97,6 +97,26 @@ def main():
 
       x_axis[link_level] = round(link_level/n, 2)
 
+    with open(f'./scalefree_graph/task3_data/task3_link_mean_n{n}_ta.csv', 'w') as f:
+      writer = csv.writer(f)
+      writer.writerow(x_axis.values())
+      writer.writerow([sum(v)/len(v) for v in guarantee_ratio_list.values()])
+
+    with open(f'./scalefree_graph/task3_data/task3_link_med_n{n}_ta.csv', 'w') as f:
+      writer = csv.writer(f)
+      writer.writerow(x_axis.values())
+      writer.writerow(np.median([v for v in guarantee_ratio_list.values()], axis=1))
+
+    with open(f'./scalefree_graph/task3_data/task3_link_mean_n{n}_tb.csv', 'w') as f:
+      writer = csv.writer(f)
+      writer.writerow(x_axis.values())
+      writer.writerow([sum(v)/len(v) for v in guarantee_number_list.values()])
+
+    with open(f'./scalefree_graph/task3_data/task3_link_med_n{n}_tb.csv', 'w') as f:
+      writer = csv.writer(f)
+      writer.writerow(x_axis.values())
+      writer.writerow(np.median([v for v in guarantee_number_list.values()], axis=1))
+
     print(f"=============== roop {r+1}/{roop} is finished ===============")
 
   fig = plt.figure()
@@ -143,22 +163,22 @@ def main():
   fig3.savefig(f'./scalefree_graph/task3_figures/task3_link_med_n{n}_b.png')
   '''
 
-  with open(f'./scalefree_graph/task3_data/task3_link_mean_n{n}_a.csv', 'w') as f:
+  with open(f'./scalefree_graph/task3_data/task3_link_mean_n{n}_fa.csv', 'w') as f:
     writer = csv.writer(f)
     writer.writerow(x_axis.values())
     writer.writerow([sum(v)/len(v) for v in guarantee_ratio_list.values()])
 
-  with open(f'./scalefree_graph/task3_data/task3_link_med_n{n}_a.csv', 'w') as f:
+  with open(f'./scalefree_graph/task3_data/task3_link_med_n{n}_fa.csv', 'w') as f:
     writer = csv.writer(f)
     writer.writerow(x_axis.values())
     writer.writerow(np.median([v for v in guarantee_ratio_list.values()], axis=1))
 
-  with open(f'./scalefree_graph/task3_data/task3_link_mean_n{n}_b.csv', 'w') as f:
+  with open(f'./scalefree_graph/task3_data/task3_link_mean_n{n}_fb.csv', 'w') as f:
     writer = csv.writer(f)
     writer.writerow(x_axis.values())
     writer.writerow([sum(v)/len(v) for v in guarantee_number_list.values()])
 
-  with open(f'./scalefree_graph/task3_data/task3_link_med_n{n}_b.csv', 'w') as f:
+  with open(f'./scalefree_graph/task3_data/task3_link_med_n{n}_fsb.csv', 'w') as f:
     writer = csv.writer(f)
     writer.writerow(x_axis.values())
     writer.writerow(np.median([v for v in guarantee_number_list.values()], axis=1))
