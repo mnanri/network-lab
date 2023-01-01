@@ -178,7 +178,7 @@ def main():
     writer.writerow(x_axis.values())
     writer.writerow([sum(v)/len(v) for v in guarantee_number_list.values()])
 
-  with open(f'./scalefree_graph/task3_data/task3_link_med_n{n}_fsb.csv', 'w') as f:
+  with open(f'./scalefree_graph/task3_data/task3_link_med_n{n}_fb.csv', 'w') as f:
     writer = csv.writer(f)
     writer.writerow(x_axis.values())
     writer.writerow(np.median([v for v in guarantee_number_list.values()], axis=1))

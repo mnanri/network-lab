@@ -43,7 +43,7 @@ def main():
   duration = []
   for r in range(roop):
     start = time.time()
-    a,_,c = sample.generate_sample(n, m, graph_num, link_level)
+    a,_,c = sample.generate_sample_bc(n, m, graph_num, link_level)
     dataA = from_networkx(a)
 
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
@@ -110,9 +110,9 @@ def main():
   ax.set_ylabel('Accuracy')
   ax.grid(axis='x', color='gray', linestyle='--')
   ax.grid(axis='y', color='gray', linestyle='--')
-  fig.savefig(f'./scalefree_graph/task2_figures/task2_mean_n{n}_10perLink_dg_reverse.png')
+  fig.savefig(f'./scalefree_graph/task2_figures/task2_mean_n{n}_10perLink_bc_reverse.png')
 
-  with open(f'./scalefree_graph/task2_data/task2_n{n}_10perLink_{roop}samples_dg_reverse.csv', 'w') as f:
+  with open(f'./scalefree_graph/task2_data/task2_n{n}_10perLink_{roop}samples_bc_reverse.csv', 'w') as f:
     writer = csv.writer(f)
     writer.writerow([i for i in range(n)])
     writer.writerow([sum(acc_mean[i])/len(acc_mean[i]) for i in range(n)])

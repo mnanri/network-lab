@@ -37,14 +37,14 @@ def main():
   m = 2
   graph_num = 4
   link_level = n // 10
-  roop = 40
+  roop = 20
   acc_mean = {}
   for i in range(n):
     acc_mean[i] = []
   duration = []
   for r in range(roop):
     start = time.time()
-    a,_,c = sample.generate_sample(n, m, graph_num, link_level)
+    a,_,c = sample.generate_sample_bc(n, m, graph_num, link_level)
     dataA = from_networkx(a)
 
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
@@ -58,19 +58,19 @@ def main():
       t = dataA.label
 
       samples = []
-      # for i in range(cnt):
-      #   for j in c[i]:
-      #     samples.append(j)
+      for i in range(cnt):
+        for j in c[i]:
+          samples.append(j)
 
       # for i in range(cnt):
       #   for j in c[n-1-i]:
       #     samples.append(j)
 
-      tmp = [i for i in range(n)]
-      random.shuffle(tmp)
-      for i in range(cnt):
-        for j in c[tmp[i]]:
-          samples.append(j)
+      # tmp = [i for i in range(n)]
+      # random.shuffle(tmp)
+      # for i in range(cnt):
+      #   for j in c[tmp[i]]:
+      #     samples.append(j)
 
       for _ in range(epoch_num):
         optimizer.zero_grad()
@@ -101,9 +101,9 @@ def main():
   ax.set_ylabel('Accuracy')
   ax.grid(axis='x', color='gray', linestyle='--')
   ax.grid(axis='y', color='gray', linestyle='--')
-  fig.savefig(f'./scalefree_graph/task2_figures/task2_mean_n{n}_10perLink_dg_rand.png')
+  fig.savefig(f'./scalefree_graph/task2_figures/task2_mean_n{n}_10perLink_bc_rand.png')
 
-  with open(f'./scalefree_graph/task2_data/task2_n{n}_10perLink_{roop}samples_dg_rand.csv', 'w') as f:
+  with open(f'./scalefree_graph/task2_data/task2_n{n}_10perLink_{roop}samples_bc_rand.csv', 'w') as f:
     writer = csv.writer(f)
     writer.writerow([i for i in range(n)])
     writer.writerow([sum(acc_mean[i])/len(acc_mean[i]) for i in range(n)])
