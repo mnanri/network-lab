@@ -101,9 +101,9 @@ def main():
   ax.set_ylabel('Accuracy')
   ax.grid(axis='x', color='gray', linestyle='--')
   ax.grid(axis='y', color='gray', linestyle='--')
-  fig.savefig(f'./scalefree_graph/task2_figures/task2_mean_n{n}_10perLink_bc_rand.png')
+  fig.savefig(f'./scalefree_graph/task2_figures/task2_mean_n{n}_10perLink_bc.png')
 
-  with open(f'./scalefree_graph/task2_data/task2_n{n}_10perLink_{roop}samples_bc_rand.csv', 'w') as f:
+  with open(f'./scalefree_graph/task2_data/task2_n{n}_10perLink_{roop}samples_bc.csv', 'w') as f:
     writer = csv.writer(f)
     writer.writerow([i for i in range(n)])
     writer.writerow([sum(acc_mean[i])/len(acc_mean[i]) for i in range(n)])
