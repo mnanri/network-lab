@@ -1,7 +1,10 @@
+import csv
+import random
+import numpy as np
 from torch_geometric.nn import GCNConv
 from torch_geometric.utils.convert import from_networkx
 import torch.nn.functional as F
-import sample3
+import sample
 import torch
 import matplotlib.pyplot as plt
 
@@ -30,24 +33,24 @@ class Net(torch.nn.Module):
     return x, y
 
 def main():
-  max_nodes_per_class = 250
-  min_nodes_per_class = 40
-  roop = 20
+  max_nodes_per_class = 450
+  min_nodes_per_class = 50
+  roop = 10
 
   guarantee_ratio_list = {}
   guarantee_number_list = {}
-  for i in range(min_nodes_per_class, max_nodes_per_class+1, 5):
+  for i in range(min_nodes_per_class, max_nodes_per_class+1, 10):
     guarantee_ratio_list[i] = []
     guarantee_number_list[i] = []
 
   threshold = 0.8
 
   for r in range(roop):
-    for n in range(min_nodes_per_class, max_nodes_per_class+1, 5):
+    for n in range(min_nodes_per_class, max_nodes_per_class+1, 10):
       m = 2
       graph_num = 4
-      link_level = n//5
-      a,c = sample3.generate_flexible_linked_sample(n, m , graph_num, link_level)
+      link_level = n // 10
+      a,_,c = sample.generate_sample(n, m , graph_num, link_level)
       dataA = from_networkx(a)
 
       device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
@@ -61,8 +64,10 @@ def main():
         t = dataA.label
 
         samples = []
+        tmp = [i for i in range(n)]
+        random.shuffle(tmp)
         for i in range(cnt):
-          for j in c[i]:
+          for j in c[tmp[i]]:
             samples.append(j)
 
         for _ in range(epoch_num):
@@ -110,5 +115,25 @@ def main():
   ax2.set_ylabel('Number of Labeled Nodes')
   ax2.grid(axis='y', color='gray', linestyle='--')
   fig2.savefig('./scalefree_graph/task3_figures/task3_mean_b.png')
+
+  with open(f'./scalefree_graph/task3_data/task3_mean_10perLink_a_rand.csv', 'w') as f:
+    writer = csv.writer(f)
+    writer.writerow(guarantee_ratio_list.keys())
+    writer.writerow([sum(v)/len(v) for v in guarantee_ratio_list.values()])
+
+  with open(f'./scalefree_graph/task3_data/task3_med_10perLink_a_rand.csv', 'w') as f:
+    writer = csv.writer(f)
+    writer.writerow(guarantee_ratio_list.keys())
+    writer.writerow(np.median([v for v in guarantee_ratio_list.values()], axis=1))
+
+  with open(f'./scalefree_graph/task3_data/task3_mean_10perLink_b_rand.csv', 'w') as f:
+    writer = csv.writer(f)
+    writer.writerow(guarantee_number_list.keys())
+    writer.writerow([sum(v)/len(v) for v in guarantee_number_list.values()])
+
+  with open(f'./scalefree_graph/task3_data/task3_med_10perLink_b_rand.csv', 'w') as f:
+    writer = csv.writer(f)
+    writer.writerow(guarantee_number_list.keys())
+    writer.writerow(np.median([v for v in guarantee_number_list.values()], axis=1))
 
 main()

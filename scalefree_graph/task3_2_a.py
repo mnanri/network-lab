@@ -2,7 +2,6 @@ import csv
 from torch_geometric.nn import GCNConv
 from torch_geometric.utils.convert import from_networkx
 import torch.nn.functional as F
-import sample3
 import sample
 import torch
 import matplotlib.pyplot as plt
@@ -52,7 +51,6 @@ def main():
 
   for r in range(roop):
     for link_level in range(min_link_level, max_link_level+1, n // 40):
-      # a,c = sample3.generate_flexible_linked_sample(n, m, graph_num, link_level)
       a,_,c = sample.generate_sample(n, m, graph_num, link_level)
       dataA = from_networkx(a)
 

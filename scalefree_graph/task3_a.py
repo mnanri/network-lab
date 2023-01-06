@@ -10,7 +10,7 @@ import matplotlib.pyplot as plt
 class Net(torch.nn.Module):
   def __init__(self, n):
     super(Net, self).__init__()
-    hidden_layer1 = 16
+    hidden_layer1 = 32
     hidden_layer2 = 4
     output_layer = 2
     self.conv1 = GCNConv(n, hidden_layer1)
@@ -34,7 +34,7 @@ class Net(torch.nn.Module):
 def main():
   max_nodes_per_class = 450
   min_nodes_per_class = 50
-  roop = 20
+  roop = 10
 
   guarantee_ratio_list = {}
   guarantee_number_list = {}
@@ -49,7 +49,7 @@ def main():
       m = 2
       graph_num = 4
       link_level = n // 10
-      a,_,c = sample.generate_sample(n, m, graph_num, link_level)
+      a,_,c = sample.generate_sample_bc(n, m, graph_num, link_level)
       dataA = from_networkx(a)
 
       device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
