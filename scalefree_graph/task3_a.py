@@ -63,8 +63,12 @@ def main():
         t = dataA.label
 
         samples = []
+        # for i in range(cnt):
+        #   for j in c[i]:
+        #     samples.append(j)
+
         for i in range(cnt):
-          for j in c[i]:
+          for j in c[(i+link_level)%n]:
             samples.append(j)
 
         for _ in range(epoch_num):
@@ -111,22 +115,22 @@ def main():
   ax2.grid(axis='y', color='gray', linestyle='--')
   fig2.savefig('./scalefree_graph/task3_figures/task3_mean_10perLink_b.png')
 
-  with open(f'./scalefree_graph/task3_data/task3_mean_10perLink_a.csv', 'w') as f:
+  with open(f'./scalefree_graph/task3_data/task3_mean_10perLink_a_dg.csv', 'w') as f:
     writer = csv.writer(f)
     writer.writerow(guarantee_ratio_list.keys())
     writer.writerow([sum(v)/len(v) for v in guarantee_ratio_list.values()])
 
-  with open(f'./scalefree_graph/task3_data/task3_med_10perLink_a.csv', 'w') as f:
+  with open(f'./scalefree_graph/task3_data/task3_med_10perLink_a_dg.csv', 'w') as f:
     writer = csv.writer(f)
     writer.writerow(guarantee_ratio_list.keys())
     writer.writerow(np.median([v for v in guarantee_ratio_list.values()], axis=1))
 
-  with open(f'./scalefree_graph/task3_data/task3_mean_10perLink_b.csv', 'w') as f:
+  with open(f'./scalefree_graph/task3_data/task3_mean_10perLink_b_dg.csv', 'w') as f:
     writer = csv.writer(f)
     writer.writerow(guarantee_number_list.keys())
     writer.writerow([sum(v)/len(v) for v in guarantee_number_list.values()])
 
-  with open(f'./scalefree_graph/task3_data/task3_med_10perLink_b.csv', 'w') as f:
+  with open(f'./scalefree_graph/task3_data/task3_med_10perLink_b_dg.csv', 'w') as f:
     writer = csv.writer(f)
     writer.writerow(guarantee_number_list.keys())
     writer.writerow(np.median([v for v in guarantee_number_list.values()], axis=1))
