@@ -18,22 +18,14 @@ def check_graph(data):
 
 def show_graph():
 
-  n = 100
-  a,b = sample.generate_sample(n)
+  n = 50
+  a,b,_ = sample.generate_sample(n)
 
-  '''
-  pos = nx.circular_layout(y)
-  pattern = [ 'gray' if y.nodes[node]['label'] == -1 else 'blue' if node < n else 'green' if node < 2*n else 'orange' if node < 3*n else 'red' for node in y.nodes() ]
-  nx.draw(y, pos, node_size=20, alpha=0.5, node_color=pattern, edge_color='gray', with_labels=False)
-  plt.show()
-  '''
-
-  '''
   pos = nx.circular_layout(a)
   pattern = [ 'blue' if node < n else 'green' if node < 2*n else 'orange' if node < 3*n else 'red' for node in a.nodes() ]
   nx.draw(a, pos, node_size=20, alpha=0.5, node_color=pattern, edge_color='gray', with_labels=False)
   plt.show()
-  '''
+
 
   a_data = from_networkx(a)
   b_data = from_networkx(b)

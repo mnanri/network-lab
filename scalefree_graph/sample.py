@@ -4,7 +4,6 @@ import matplotlib.pyplot as plt
 import numpy as np
 import torch
 
-
 def generate_sample(n=100, m=2, graph_num=4, link_level=10):
   G = []
   for i in range(graph_num):
