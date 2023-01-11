@@ -1,7 +1,7 @@
 import csv
 from matplotlib import pyplot as plt
 
-def show_integarte_figures(tk=2, n=400, links=10, samples=20, tp=""):
+def integarte_figures2(tk=2, n=400, links=10, samples=20, tp=""):
   if tp != "":
     tp = f"_{tp}"
 
@@ -42,7 +42,7 @@ def show_integarte_figures(tk=2, n=400, links=10, samples=20, tp=""):
   ax.grid(axis='y', color='gray', linestyle='--')
   fig.savefig(f'./scalefree_graph/task{tk}_data/task{tk}_n{n}_{links}perLink_{samples}samples{tp}.png')
 
-def show_integrate_figures_(tk=3, st="mean", links=10, op="a"):
+def integrate_figures3(tk=3, st="mean", links=10, op="a"):
   title = ""
   if op == "a":
     title = "Ratio"
@@ -75,5 +75,5 @@ def show_integrate_figures_(tk=3, st="mean", links=10, op="a"):
   ax.grid(axis='y', color='gray', linestyle='--')
   fig.savefig(f'./scalefree_graph/task{tk}_data/task{tk}_{st}_{links}perLink_{op}.png')
 
-# show_integarte_figures(2, 400, 10, 20, "com")
-# show_integrate_figures_(3, "mean", 10, "a")
+# integarte_figures2(2, 400, 10, 20, "com")
+# integrate_figures3(3, "mean", 10, "a")
