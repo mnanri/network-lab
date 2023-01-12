@@ -79,15 +79,18 @@ def inspect_error_nodes():
         print('Labeled Node:' + str(cnt) + ', Accuracy: ' + str(1 - err/len(pred)))
         continue
 
+      for i,p in enumerate(pred):
+        all_degree[dict(net.degree())[i]] += (1/roop)
+        if p != t[i]:
+          error_degree[dict(net.degree())[i]] += (1/roop)
+
       if r == roop-1:
         network_degree = []
         error_nodes = []
         for i,p in enumerate(pred):
           network_degree.append(dict(net.degree())[i])
-          all_degree[dict(net.degree())[i]] += (1/roop)
           if p != t[i]:
             error_nodes.append(dict(net.degree())[i])
-            error_degree[dict(net.degree())[i]] += (1/roop)
 
         fig = plt.figure()
         fig.suptitle('Error nodes: Accuracy 80%')
@@ -110,4 +113,80 @@ def inspect_error_nodes():
     writer.writerow(all_degree)
     writer.writerow(error_degree)
 
-inspect_error_nodes()
+def generate_figure(option="random", h=100):
+  fig = plt.figure()
+  fig.suptitle('Error nodes: Accuracy 80%')
+  ax = fig.add_subplot(111)
+  ax.set_yscale('log')
+
+  with open(f'./scalefree_graph/error_nodes_{option}.csv', 'r') as f:
+    reader = csv.reader(f)
+    x = [i for i in range(h) ]
+    y = [ row for row in reader ]
+    for i in range(len(y)):
+      for j in range(len(y[i])):
+        y[i][j] = round(float(y[i][j]), 0)
+    ax.bar(x, y[0][:len(x)], label='all nodes')
+    ax.bar(x, y[1][:len(x)], label='error nodes')
+
+  ax.legend()
+  ax.set_xlabel('Degree')
+  ax.set_ylabel('Number of nodes')
+  ax.grid(axis='y', color='gray', linestyle='dashed')
+  fig.savefig(f'./scalefree_graph/error_nodes_{option}.png')
+
+def generate_plot(h = 100):
+  fig = plt.figure()
+  fig.suptitle('Error Nodes Rate: Accuracy 80%')
+  ax = fig.add_subplot(111)
+
+  with open(f'./scalefree_graph/error_nodes_random.csv', 'r') as f:
+    reader = csv.reader(f)
+    x = [i for i in range(h) ]
+    y = [ row for row in reader ]
+    for i in range(len(y)):
+      for j in range(len(y[i])):
+        y[i][j] = float(y[i][j])
+    z = [(1-y[1][i]/y[0][i]) if y[0][i] >= 1  else 1 for i in range(len(y[0]))]
+    ax.plot(x, z[:len(x)], label='random')
+
+  with open(f'./scalefree_graph/error_nodes_degree_desc.csv', 'r') as f:
+    reader = csv.reader(f)
+    x = [i for i in range(h) ]
+    y = [ row for row in reader ]
+    for i in range(len(y)):
+      for j in range(len(y[i])):
+        y[i][j] = float(y[i][j])
+    z = [(1-y[1][i]/y[0][i]) if y[0][i] >= 1 else 1 for i in range(len(y[0]))]
+    ax.plot(x, z[:len(x)], label='degree desc')
+
+  with open(f'./scalefree_graph/error_nodes_degree_asc.csv', 'r') as f:
+    reader = csv.reader(f)
+    x = [i for i in range(h) ]
+    y = [ row for row in reader ]
+    for i in range(len(y)):
+      for j in range(len(y[i])):
+        y[i][j] = float(y[i][j])
+    z = [(1-y[1][i]/y[0][i]) if y[0][i] >= 1 else 1 for i in range(len(y[0]))]
+    ax.plot(x, z[:len(x)], label='degree asc')
+
+  with open(f'./scalefree_graph/error_nodes_degree_com.csv', 'r') as f:
+    reader = csv.reader(f)
+    x = [i for i in range(h) ]
+    y = [ row for row in reader ]
+    for i in range(len(y)):
+      for j in range(len(y[i])):
+        y[i][j] = float(y[i][j])
+    z = [(1-y[1][i]/y[0][i]) if y[0][i] >= 1 else 1 for i in range(len(y[0]))]
+    ax.plot(x, z[:len(x)], label='degree complex')
+
+  ax.legend()
+  ax.set_xlabel('Degree')
+  ax.set_ylabel('Error Nodes Rate')
+  ax.grid(axis='x', color='gray', linestyle='dashed')
+  ax.grid(axis='y', color='gray', linestyle='dashed')
+  fig.savefig(f'./scalefree_graph/error_nodes_rate.png')
+
+# inspect_error_nodes()
+# generate_figure("random", 60)
+# generate_plot(60)

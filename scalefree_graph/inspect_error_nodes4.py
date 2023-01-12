@@ -77,15 +77,18 @@ def inspect_error_nodes():
         print('Labeled Node:' + str(cnt) + ', Accuracy: ' + str(1 - err/len(pred)))
         continue
 
+      for i,p in enumerate(pred):
+        all_degree[dict(net.degree())[i]] += (1/roop)
+        if p != t[i]:
+          error_degree[dict(net.degree())[i]] += (1/roop)
+
       if r == roop-1:
         network_degree = []
         error_nodes = []
         for i,p in enumerate(pred):
           network_degree.append(dict(net.degree())[i])
-          all_degree[dict(net.degree())[i]] += (1/roop)
           if p != t[i]:
             error_nodes.append(dict(net.degree())[i])
-            error_degree[dict(net.degree())[i]] += (1/roop)
 
         fig = plt.figure()
         fig.suptitle('Error nodes: Accuracy 80%')
